@@ -17,20 +17,21 @@ class Plane {
     this.dir = d;
   }
 
-  void show(float sizex, float sizey) {
+  void show(float sizex, float sizey, boolean half, boolean side) {
     pushMatrix();
     translate(this.pos.x, this.pos.y);
-    fill(255-fill);
+    fill(255-fill);    // circle fill
     strokeWeight(1);
-    stroke(fill);
+    //stroke(fill);      // circle stroke
     //noStroke();
-    ellipse(0, 0, sizex*1.1, sizey*1.1);
-
-    //fill(255, 0, 0);
-    //textAlign(CENTER, CENTER);
-    //textFont(font);
-    //textSize(12);
-    //text("1", -15, 0);
+    if (half) {
+      if(side){
+        rotate(PI);
+      }
+      arc(0, 0, sizex, sizey, HALF_PI, 3*HALF_PI, OPEN);
+    } else {
+      ellipse(0, 0, sizex*3.7, sizey*3.7);
+    }
 
     if (this.dir.equals("S")) {
       rotate(PI);
@@ -40,14 +41,21 @@ class Plane {
       rotate(-HALF_PI);
     }
 
-    pushMatrix();
-    rotate(-QUARTER_PI);
-    airplane.disableStyle();
-    fill(fill, 255);
-    //strokeWeight(3);
-    stroke(100);
-    shape(airplane, 0, 0, sizex/1.2, sizey/1.2);
-    popMatrix();
+    //pushMatrix();
+    ////rotate(-QUARTER_PI);
+    //rotate(PI);
+    //airplane.disableStyle();
+    //fill(fill, 255);      // airplane fill (should be opposite of circle
+    ////strokeWeight(3);
+    //stroke(fill);
+    ////shape(airplane, 0, 0, sizex/1.2, sizey/1.2);
+    //beginShape();
+    //vertex(0,0);
+    //vertex(-sizex, -sizey);
+    //vertex(0, sizex);
+    //vertex(sizex, -sizey);
+    //endShape();
+    //popMatrix();
 
 
     popMatrix();

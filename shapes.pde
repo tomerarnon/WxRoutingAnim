@@ -13,10 +13,10 @@ void runway(int x, int y) {
 
   fill(0);
   noStroke();
-  ellipse(0,0, scalex/4, scaley/4);
+  ellipse(0,0, scalex/3, scaley/3);
 
   noFill();
-  strokeWeight(4);
+  strokeWeight(2);
   stroke(0);
   ellipse(0,0, scalex/1.3, scaley/1.3);
 

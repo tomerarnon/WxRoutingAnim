@@ -28,7 +28,7 @@ String beginfp_indranil = "/Volumes/32G/WxRouting/Indranil/";
 File[] files = new File(dataPath(beginfp)).listFiles(); 
 File[] files_indranil = new File(dataPath(beginfp_indranil)).listFiles();
 
-String pdf = "images/" + str(scenario) + "_" + str(time_per_move) + "_" + ".pdf";
+String pdf = "images/" + str(scenario) + "_" + str(time_per_move) + ".pdf";
 boolean savepdf = true;
 
 
@@ -121,23 +121,28 @@ void draw() {
 
   airplane = new PVector(staterow.getInt(3)-1, staterow.getInt(2)-1);
   airplane_indranil = new PVector(row_indranil.getInt(1)-1, row_indranil.getInt(2)-1);
+  PVector samespace = PVector.sub(airplane, airplane_indranil);
 
-  if (PVector.sub(airplane, airplane_indranil).mag() == 0) {
-    plane.update(airplane.x * scalex, (airplane.y + 0.3) * scaley, staterow.getString(4));
-    indranil.update(airplane_indranil.x * scalex, (airplane_indranil.y - 0.3) * scaley, row_indranil.getString(3));
+  if (samespace.mag() == 0) {
+    //plane.update(airplane.x * scalex, (airplane.y + 0.3) * scaley, staterow.getString(4));
+    //indranil.update(airplane_indranil.x * scalex, (airplane_indranil.y - 0.3) * scaley, row_indranil.getString(3));
+    plane.update(airplane.x * scalex, airplane.y * scaley, staterow.getString(4));
+    indranil.update(airplane_indranil.x * scalex, airplane_indranil.y * scaley, row_indranil.getString(3));
   } else {
     plane.update(airplane.x * scalex, airplane.y * scaley, staterow.getString(4));
     indranil.update(airplane_indranil.x * scalex, airplane_indranil.y * scaley, row_indranil.getString(3));
   }
 
   pushMatrix();
-  stroke(0, 100);
+  stroke(0, 255);
   strokeWeight(1);
   noFill();
-  rect(0, 0, width, height);
+  rect(0, 0, width-1, height-1);
   translate(scalex/2, scaley/2);  // move by half of one square to center everything
 
   // grid lines
+  strokeWeight(1);
+  stroke(50, 50);
   for (int j=0; j < cols; j++) {
     line(-100, j*scaley + scaley/2, width+100, j*scaley + scaley/2);
   }
@@ -173,8 +178,16 @@ void draw() {
   runway(int(airport.x) * scalex, int(airport.y) * scaley);
   //
   //DRAW AIRPLANE
-  plane.show(scalex/2.1, scaley/2.1);
-  indranil.show(scalex/2.1, scaley/2.1);
+  if (samespace.mag() == 0) {
+    println("samespace");
+    //indranil.show(scalex/8, scaley/8);
+    //plane.show(scalex/8, scaley/8);
+    plane.show(scalex, scaley, true, true);
+    indranil.show(scalex, scaley, true, false);
+  } else {
+    plane.show(scalex/4, scaley/4, false, false);
+    indranil.show(scalex/4, scaley/4, false, false);
+  }
   //
 
   // CLOUDS
@@ -215,17 +228,18 @@ void draw() {
   popMatrix();
 
   if (savepdf) {
-    PGraphicsPDF pdf = (PGraphicsPDF) g; 
-    pdf.nextPage();
+    if (index + 1 < wx_indranil.size()) {
+      PGraphicsPDF pdf = (PGraphicsPDF) g; 
+      pdf.nextPage();
+
+      index += 1;
+    } else { 
+      //index=0;
+      exit();
+    }
   }
+
   //noLoop();
-  if (index + 1 < wx_indranil.size()) {
-    index+=1;
-  } else { 
-    //index=0;
-    noLoop();
-    exit();
-  }
 }
 
 
@@ -235,7 +249,7 @@ void draw() {
 
 void mousePressed() {
   int step = 1;
-  if (index + step < wx.size()) {
+  if (index + step < wx_indranil.size()) {
     index+=step;
     if (savepdf) {
     }
