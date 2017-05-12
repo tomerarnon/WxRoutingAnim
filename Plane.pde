@@ -23,15 +23,15 @@ class Plane {
     fill(255-fill);    // circle fill
     strokeWeight(1);
     //stroke(fill);      // circle stroke
-    //noStroke();
-    if (half) {
-      if(side){
-        rotate(PI);
-      }
-      arc(0, 0, sizex, sizey, HALF_PI, 3*HALF_PI, OPEN);
-    } else {
-      ellipse(0, 0, sizex*3.7, sizey*3.7);
-    }
+    ////noStroke();
+    //if (half) {
+    //  if(side){
+    //    rotate(PI);
+    //  }
+    //  arc(0, 0, sizex, sizey, HALF_PI, 3*HALF_PI, OPEN);
+    //} else {
+    //  ellipse(0, 0, sizex*3.7, sizey*3.7);
+    //}
 
     if (this.dir.equals("S")) {
       rotate(PI);
@@ -41,21 +41,22 @@ class Plane {
       rotate(-HALF_PI);
     }
 
-    //pushMatrix();
-    ////rotate(-QUARTER_PI);
-    //rotate(PI);
-    //airplane.disableStyle();
-    //fill(fill, 255);      // airplane fill (should be opposite of circle
-    ////strokeWeight(3);
-    //stroke(fill);
-    ////shape(airplane, 0, 0, sizex/1.2, sizey/1.2);
-    //beginShape();
-    //vertex(0,0);
-    //vertex(-sizex, -sizey);
-    //vertex(0, sizex);
-    //vertex(sizex, -sizey);
-    //endShape();
-    //popMatrix();
+    pushMatrix();
+    //rotate(-QUARTER_PI);
+    rotate(PI);
+    airplane.disableStyle();
+    fill(fill, 255);      // airplane fill (should be opposite of circle
+    strokeWeight(1);
+    stroke(0);
+    //shape(airplane, 0, 0, sizex/1.2, sizey/1.2);
+    beginShape();
+    vertex(0, -sizex/2);
+    vertex(-sizex, -sizey);
+    vertex(0, sizex-1);
+    vertex(sizex, -sizey);
+    vertex(0, -sizex/2);
+    endShape();
+    popMatrix();
 
 
     popMatrix();

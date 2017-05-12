@@ -124,10 +124,10 @@ void draw() {
   PVector samespace = PVector.sub(airplane, airplane_indranil);
 
   if (samespace.mag() == 0) {
-    //plane.update(airplane.x * scalex, (airplane.y + 0.3) * scaley, staterow.getString(4));
-    //indranil.update(airplane_indranil.x * scalex, (airplane_indranil.y - 0.3) * scaley, row_indranil.getString(3));
-    plane.update(airplane.x * scalex, airplane.y * scaley, staterow.getString(4));
-    indranil.update(airplane_indranil.x * scalex, airplane_indranil.y * scaley, row_indranil.getString(3));
+    plane.update(airplane.x * scalex, (airplane.y + 0.3) * scaley, staterow.getString(4));
+    indranil.update(airplane_indranil.x * scalex, (airplane_indranil.y - 0.3) * scaley, row_indranil.getString(3));
+    //plane.update(airplane.x * scalex, airplane.y * scaley, staterow.getString(4));
+    //indranil.update(airplane_indranil.x * scalex, airplane_indranil.y * scaley, row_indranil.getString(3));
   } else {
     plane.update(airplane.x * scalex, airplane.y * scaley, staterow.getString(4));
     indranil.update(airplane_indranil.x * scalex, airplane_indranil.y * scaley, row_indranil.getString(3));
@@ -182,8 +182,8 @@ void draw() {
     println("samespace");
     //indranil.show(scalex/8, scaley/8);
     //plane.show(scalex/8, scaley/8);
-    plane.show(scalex, scaley, true, true);
-    indranil.show(scalex, scaley, true, false);
+    plane.show(scalex/4, scaley/4, true, true);
+    indranil.show(scalex/4, scaley/4, true, false);
   } else {
     plane.show(scalex/4, scaley/4, false, false);
     indranil.show(scalex/4, scaley/4, false, false);
