@@ -1,0 +1,124 @@
+class Plane {
+  PVector pos;
+  //PShape airplane = loadShape("Objects/Airplane_silhouette.svg");
+  String dir = "E";
+
+  Plane(float x, float y) {
+    this.pos = new PVector(0, 0);
+    this.pos.x = x;
+    this.pos.x = y;
+  }
+
+  void update(float x, float y, String d) {
+    this.pos.x = x;
+    this.pos.y = y;
+    this.dir = d;
+  }
+
+  void show(float sizex, float sizey) {
+    pushMatrix();
+    translate(this.pos.x, this.pos.y);
+    fill(255);
+    //strokeWeight(1);
+    //stroke(0, 0, 0);
+    noStroke();
+    ellipse(0, 0, sizex, sizey);
+
+    fill(255, 0, 0);
+    textAlign(CENTER, CENTER);
+    textFont(font);
+    textSize(12);
+    text("1", -15, 0);
+
+    if (this.dir.equals("S")) {
+      rotate(PI);
+    } else if (this.dir.equals("E")) {
+      rotate(HALF_PI);
+    } else if (this.dir.equals("W")) {
+      rotate(-HALF_PI);
+    }
+
+    pushMatrix();
+    rotate(-QUARTER_PI);
+    //airplane.disableStyle();
+    fill(0, 255);
+    stroke(100);
+    //shape(airplane, 0, 0, sizex/1.2, sizey/1.2);
+    popMatrix();
+
+
+    popMatrix();
+  }
+
+
+
+
+  void radar(String binary) {
+    pushMatrix();
+    translate(this.pos.x, this.pos.y);
+    if (this.dir.equals("S")) {
+      rotate(PI);
+    } else if (this.dir.equals("E")) {
+      rotate(HALF_PI);
+    } else if (this.dir.equals("W")) {
+      rotate(-HALF_PI);
+    }
+
+    //// Basic green triangle
+    PVector toppoint = new PVector(0, -0.1*scalex);
+    PVector rightpoint = new PVector(1.5*scalex, -(2.*scaley));
+    PVector leftpoint = new PVector(-1.5*scalex, -(2.*scaley));
+    noStroke();
+    fill(0, 255, 0, 30);
+    for (float t=0; t<1; t+=0.01) {
+      fill(0, 255, 0, 2);
+      triangle(toppoint.x, toppoint.y, 
+        leftpoint.x*t*1.4*t, leftpoint.y*t*1.2, 
+        rightpoint.x*t*1.4*t, rightpoint.y*t*1.2);
+    }
+    ////
+
+    //triangle(toppoint.x, toppoint.y, 
+    //  leftpoint.x, leftpoint.y, 
+    //  rightpoint.x, rightpoint.y);
+    //
+
+    //// Red triangle overlay
+    PVector lpt = PVector.mult(leftpoint, 0.5);   //midpoint of the left side
+    PVector rpt = PVector.mult(rightpoint, 0.5);  // midpoint of the right side
+
+    String[] b = new String[binary.length()];
+
+    fill(255, 0, 0, 100);           // fill for the detected state
+
+    for (int i = 0; i < binary.length(); i++) {
+      b[i] = str(binary.charAt(i));
+    }
+    // if closest to plane
+    for (int i = 0; i<b.length; i++) {
+      if (b[i].equals("1") && i==0) {
+        fill(255, 0, 0, 120);           
+
+        triangle(toppoint.x, toppoint.y, lpt.x, lpt.y, rpt.x, rpt.y);
+      }
+
+      //if left of plane
+      if (b[i].equals("1") && i==1) {
+        triangle(rpt.x, rpt.y, rightpoint.x, rightpoint.y, rpt.x, rightpoint.y);
+      }
+
+      // if right in front
+      if (b[i].equals("1") && i==2) {
+        rectMode(CORNERS);
+        rect(lpt.x+2, lpt.y-2, rpt.x-2, rightpoint.y);
+      }
+
+      //if right of plane
+      if (b[i].equals("1") && i==3) {
+        triangle(lpt.x, lpt.y, leftpoint.x, leftpoint.y, lpt.x, leftpoint.y);
+      }
+    }
+    popMatrix();
+  }
+  //
+}
