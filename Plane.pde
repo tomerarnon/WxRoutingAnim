@@ -1,12 +1,14 @@
 class Plane {
   PVector pos;
-  //PShape airplane = loadShape("Objects/Airplane_silhouette.svg");
+  PShape airplane = loadShape("Objects/Airplane_silhouette.svg");
   String dir = "E";
+  int fill;
 
-  Plane(float x, float y) {
+  Plane(float x, float y, int fill) {
     this.pos = new PVector(0, 0);
     this.pos.x = x;
     this.pos.x = y;
+    this.fill = fill;
   }
 
   void update(float x, float y, String d) {
@@ -18,17 +20,17 @@ class Plane {
   void show(float sizex, float sizey) {
     pushMatrix();
     translate(this.pos.x, this.pos.y);
-    fill(255);
-    //strokeWeight(1);
-    //stroke(0, 0, 0);
-    noStroke();
-    ellipse(0, 0, sizex, sizey);
+    fill(255-fill);
+    strokeWeight(1);
+    stroke(fill);
+    //noStroke();
+    ellipse(0, 0, sizex*1.1, sizey*1.1);
 
-    fill(255, 0, 0);
-    textAlign(CENTER, CENTER);
-    textFont(font);
-    textSize(12);
-    text("1", -15, 0);
+    //fill(255, 0, 0);
+    //textAlign(CENTER, CENTER);
+    //textFont(font);
+    //textSize(12);
+    //text("1", -15, 0);
 
     if (this.dir.equals("S")) {
       rotate(PI);
@@ -40,10 +42,11 @@ class Plane {
 
     pushMatrix();
     rotate(-QUARTER_PI);
-    //airplane.disableStyle();
-    fill(0, 255);
+    airplane.disableStyle();
+    fill(fill, 255);
+    //strokeWeight(3);
     stroke(100);
-    //shape(airplane, 0, 0, sizex/1.2, sizey/1.2);
+    shape(airplane, 0, 0, sizex/1.2, sizey/1.2);
     popMatrix();
 
 

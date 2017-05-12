@@ -2,7 +2,7 @@ import processing.pdf.*;
 
 PFont font;
 Table table, statetable;
-TableRow staterow; //statetable is a single row; this structure makes getting values more concise
+TableRow row_indranil, staterow; //statetable is a single row; this structure makes getting values more concise
 ArrayList<Table> wx =  new ArrayList<Table>();      // array list of all weather states
 ArrayList<Table> state =  new ArrayList<Table>();    // array list of all states
 // state -> [Index, Binary(radar detection state), plane_x, plane_y, heading, airport_x, airport_y, wind speed, wind direction (degrees clockwise from south), airspace size_x, airspace size_y]
@@ -18,30 +18,30 @@ ArrayList<Table> wx_indranil = new ArrayList<Table>();
 
 int rows, cols, scalex, scaley, index=0;
 Plane plane;
-Plane Indranil;
+Plane indranil;
 PVector airplane, airport, airplane_indranil;
 
 int scenario = 14;
 int time_per_move = 4;
-//String swx = "wx1";
 String beginfp = "/Volumes/32G/WxRouting/Scenario"+str(scenario)+"_"+str(time_per_move)+"/";
 String beginfp_indranil = "/Volumes/32G/WxRouting/Indranil/";
 File[] files = new File(dataPath(beginfp)).listFiles(); 
 File[] files_indranil = new File(dataPath(beginfp_indranil)).listFiles();
 
 String pdf = "images/" + str(scenario) + "_" + str(time_per_move) + "_" + ".pdf";
-boolean savepdf = false;
+boolean savepdf = true;
 
 
 
 
 
 void setup() {
-  //size(495, 350, PDF, pdf); 
-  size(495, 350); 
+  size(495, 350, PDF, pdf); 
+  //size(495, 350); 
 
   shapeMode(CENTER);
-  plane = new Plane(0, 0);
+  plane = new Plane(0, 0, 0);
+  indranil = new Plane(0, 0, 255);
 
   // Load Edward's .csv data
   for (int i=0; i<files.length; i++) {
@@ -68,12 +68,12 @@ void setup() {
   for (int i=0; i<files_indranil.length; i++) {
     String filename = files_indranil[i].getAbsolutePath();
     String[] match_scenario = match(filename, str(scenario));
-    if (match_scenario != null) {                 // if the filename doesn't have the scenario number in it
+    if (match_scenario != null) {                 // if the filename has the scenario number in it
       String[] match_wx = match(filename, "WX");
-      if (match_wx==null) {
+      if (match_wx==null) {                       // check to see if it has "WX" in it
         state_indranil = loadTable(filename, "header");
       } else {
-        wx_indranil_table = loadTable(filename);
+        wx_indranil_table = loadTable(filename, "header");
       }
     }
   }
@@ -87,7 +87,6 @@ void setup() {
     temp.addColumn("value");
     for (int j=0; j<wx_indranil_table.getColumnCount(); j++) {
       Float value = row.getFloat(j);
-      print(value);
       if (value>1) {
         int x = (j - j%rows)/rows;
         int y = j%rows;
@@ -99,7 +98,6 @@ void setup() {
     }
     wx_indranil.add(temp);
   }
-  saveTable(wx_indranil_table, "table.csv");
 
   font = createFont("Arial-Black", 25);
   //font = createFont("AppleMyungjo", 18);
@@ -114,24 +112,32 @@ void setup() {
 
 void draw() {
   background(255);
-  strokeWeight(1);
-  rect(0, 0, width, height);
   //index = 0;
 
   table = wx.get(index);
+  wx_indranil_table = wx_indranil.get(index);
   staterow = state.get(index).getRow(0);
+  TableRow row_indranil = state_indranil.getRow(index);
 
-  airplane = new PVector(staterow.getInt(3)-1, staterow.getInt(2)-1); 
-  String heading = staterow.getString(4);
-  plane.update(airplane.x * scalex, airplane.y * scaley, heading);
+  airplane = new PVector(staterow.getInt(3)-1, staterow.getInt(2)-1);
+  airplane_indranil = new PVector(row_indranil.getInt(1)-1, row_indranil.getInt(2)-1);
 
+  if (PVector.sub(airplane, airplane_indranil).mag() == 0) {
+    plane.update(airplane.x * scalex, (airplane.y + 0.3) * scaley, staterow.getString(4));
+    indranil.update(airplane_indranil.x * scalex, (airplane_indranil.y - 0.3) * scaley, row_indranil.getString(3));
+  } else {
+    plane.update(airplane.x * scalex, airplane.y * scaley, staterow.getString(4));
+    indranil.update(airplane_indranil.x * scalex, airplane_indranil.y * scaley, row_indranil.getString(3));
+  }
 
   pushMatrix();
+  stroke(0, 100);
+  strokeWeight(1);
+  noFill();
+  rect(0, 0, width, height);
   translate(scalex/2, scaley/2);  // move by half of one square to center everything
 
   // grid lines
-  stroke(0, 100);
-  strokeWeight(1);
   for (int j=0; j < cols; j++) {
     line(-100, j*scaley + scaley/2, width+100, j*scaley + scaley/2);
   }
@@ -164,14 +170,14 @@ void draw() {
   //
 
   //RUNWAY
-  //runway(int(airport.x) * scalex, int(airport.y) * scaley);
+  runway(int(airport.x) * scalex, int(airport.y) * scaley);
   //
   //DRAW AIRPLANE
-  //plane.show(scalex/3, scaley/3);
+  plane.show(scalex/2.1, scaley/2.1);
+  indranil.show(scalex/2.1, scaley/2.1);
   //
 
   // CLOUDS
-  table = wx.get(index);
   for (int i=0; i<table.getRowCount(); i++) {
     int y= table.getRow(i).getInt(0) -1; 
     int x = table.getRow(i).getInt(1) -1; 
@@ -180,20 +186,46 @@ void draw() {
     String v = str(value);
     noStroke();
     fill(100, 200);
-    rect(x*scalex - scalex/2 -1, y*scaley - scaley/2 -1, scalex, scaley);
+    rectMode(CENTER);
+    rect(x*scalex, y*scaley, scalex, scaley);
     textAlign(CENTER, CENTER);
     textSize(18);
     fill(255);
-    text(v, x*scalex, y*scaley);
+    //text(v, x*scalex, y*scaley);
+    rectMode(CORNER);
   }
+
+  //table = wx_indranil_table;
+  //for (int i=0; i<table.getRowCount(); i++) {
+  //  int y= table.getRow(i).getInt(0); 
+  //  int x = table.getRow(i).getInt(1) -1; 
+  //  float value = table.getRow(i).getInt(2); 
+  //  value = round(value * 10) * 0.1;
+  //  String v = str(value);
+  //  noStroke();
+  //  fill(0, 200);
+  //  rect(x*scalex - scalex/2 +10, y*scaley - scaley/2 +10, scalex-10, scaley-10);
+  //  textAlign(CENTER, CENTER);
+  //  textSize(18);
+  //  fill(255);
+  //  //text(v, x*scalex, y*scaley);
+  //}
   //
 
   popMatrix();
 
   if (savepdf) {
+    PGraphicsPDF pdf = (PGraphicsPDF) g; 
+    pdf.nextPage();
+  }
+  //noLoop();
+  if (index + 1 < wx_indranil.size()) {
+    index+=1;
+  } else { 
+    //index=0;
+    noLoop();
     exit();
   }
-  noLoop();
 }
 
 
@@ -205,15 +237,17 @@ void mousePressed() {
   int step = 1;
   if (index + step < wx.size()) {
     index+=step;
+    if (savepdf) {
+    }
   } else { 
     index=0;
-  };
+  }
   redraw();
 }
 
 void keyPressed() {
   if (key =='s' || key=='S') {
-    saveFrame("images/" + str(scenario) + "_" + str(time_per_move) + "/" + str(index) + ".png");
+    saveFrame("images/" + str(scenario) + "_" + str(time_per_move) + "_" + str(index) + ".png");
     // example filename:  ../images/34_4/14.png
     println("saved");
   }
