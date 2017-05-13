@@ -21,23 +21,23 @@ Plane plane;
 Plane indranil;
 PVector airplane, airport, airplane_indranil;
 
-int scenario = 14;
-int time_per_move = 4;
-String beginfp = "/Volumes/32G/WxRouting/Scenario"+str(scenario)+"_"+str(time_per_move)+"/";
-String beginfp_indranil = "/Volumes/32G/WxRouting/Indranil/";
+int scenario = 32;
+int time_per_move = 2;
+String beginfp = "/Volumes/31G/WxRouting/Scenario"+str(scenario)+"_"+str(time_per_move)+"/";
+String beginfp_indranil = "/Volumes/31G/WxRouting/Indranil/";
 File[] files = new File(dataPath(beginfp)).listFiles(); 
 File[] files_indranil = new File(dataPath(beginfp_indranil)).listFiles();
 
 String pdf = "images/" + str(scenario) + "_" + str(time_per_move) + ".pdf";
-boolean savepdf = true;
+boolean savepdf = false;
 
 
 
 
 
 void setup() {
-  size(495, 350, PDF, pdf); 
-  //size(495, 350); 
+  //size(495, 350, PDF, pdf); 
+  size(495, 350); 
 
   shapeMode(CENTER);
   plane = new Plane(0, 0, 0);
@@ -98,6 +98,7 @@ void setup() {
     }
     wx_indranil.add(temp);
   }
+  saveTable(state_indranil, "table.csv");
 
   font = createFont("Arial-Black", 25);
   //font = createFont("AppleMyungjo", 18);
@@ -119,6 +120,8 @@ void draw() {
   staterow = state.get(index).getRow(0);
   TableRow row_indranil = state_indranil.getRow(index);
 
+  //saveTable(wx_indranil_table, "table.csv");
+
   airplane = new PVector(staterow.getInt(3)-1, staterow.getInt(2)-1);
   airplane_indranil = new PVector(row_indranil.getInt(1)-1, row_indranil.getInt(2)-1);
   PVector samespace = PVector.sub(airplane, airplane_indranil);
@@ -135,9 +138,9 @@ void draw() {
 
   pushMatrix();
   stroke(0, 255);
-  strokeWeight(1);
+  strokeWeight(2);
   noFill();
-  rect(0, 0, width-1, height-1);
+  rect(1, 1, width-1, height-1);
   translate(scalex/2, scaley/2);  // move by half of one square to center everything
 
   // grid lines
@@ -228,7 +231,7 @@ void draw() {
   popMatrix();
 
   if (savepdf) {
-    if (index + 1 < wx_indranil.size()) {
+    if (index + 1 < wx.size()) {
       PGraphicsPDF pdf = (PGraphicsPDF) g; 
       pdf.nextPage();
 
