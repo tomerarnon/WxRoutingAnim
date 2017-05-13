@@ -23,8 +23,10 @@ PVector airplane, airport, airplane_indranil;
 
 int scenario = 32;
 int time_per_move = 2;
-String beginfp = "/Volumes/31G/WxRouting/Scenario"+str(scenario)+"_"+str(time_per_move)+"/";
-String beginfp_indranil = "/Volumes/31G/WxRouting/Indranil/";
+//String beginfp = "/Volumes/31G/WxRouting/Scenario"+str(scenario)+"_"+str(time_per_move)+"/";
+String beginfp = "/Users/tomer/Documents/Processing/WxRoutingAnim/Edward/Scenario"+str(scenario)+"_"+str(time_per_move)+"/";
+//String beginfp_indranil = "/Volumes/31G/WxRouting/Indranil/";
+String beginfp_indranil = "/Users/tomer/Documents/Processing/WxRoutingAnim/Indranil/";
 File[] files = new File(dataPath(beginfp)).listFiles(); 
 File[] files_indranil = new File(dataPath(beginfp_indranil)).listFiles();
 
@@ -36,6 +38,7 @@ boolean savepdf = false;
 
 
 void setup() {
+
   //size(495, 350, PDF, pdf); 
   size(495, 350); 
 
@@ -55,7 +58,7 @@ void setup() {
       wx.add(table);
     }
   }
-  // set some stuff
+  // set some global stuff from this data
   TableRow r = state.get(0).getRow(0);
   airport = new PVector(r.getInt(5)-1, r.getInt(6)-1);
   rows = r.getInt(10);
@@ -73,7 +76,7 @@ void setup() {
       if (match_wx==null) {                       // check to see if it has "WX" in it
         state_indranil = loadTable(filename, "header");
       } else {
-        wx_indranil_table = loadTable(filename, "header");
+        wx_indranil_table = loadTable(filename);
       }
     }
   }
@@ -85,7 +88,7 @@ void setup() {
     temp.addColumn("CloudX");
     temp.addColumn("CloudY");
     temp.addColumn("value");
-    for (int j=0; j<wx_indranil_table.getColumnCount(); j++) {
+    for (int j=1; j<wx_indranil_table.getColumnCount(); j++) {
       Float value = row.getFloat(j);
       if (value>1) {
         int x = (j - j%rows)/rows;
@@ -98,7 +101,6 @@ void setup() {
     }
     wx_indranil.add(temp);
   }
-  saveTable(state_indranil, "table.csv");
 
   font = createFont("Arial-Black", 25);
   //font = createFont("AppleMyungjo", 18);
@@ -112,6 +114,7 @@ void setup() {
 
 
 void draw() {
+  println(index);
   background(255);
   //index = 0;
 
@@ -120,7 +123,6 @@ void draw() {
   staterow = state.get(index).getRow(0);
   TableRow row_indranil = state_indranil.getRow(index);
 
-  //saveTable(wx_indranil_table, "table.csv");
 
   airplane = new PVector(staterow.getInt(3)-1, staterow.getInt(2)-1);
   airplane_indranil = new PVector(row_indranil.getInt(1)-1, row_indranil.getInt(2)-1);
@@ -182,7 +184,7 @@ void draw() {
   //
   //DRAW AIRPLANE
   if (samespace.mag() == 0) {
-    println("samespace");
+
     //indranil.show(scalex/8, scaley/8);
     //plane.show(scalex/8, scaley/8);
     plane.show(scalex/4, scaley/4, true, true);
@@ -226,7 +228,7 @@ void draw() {
   //  fill(255);
   //  //text(v, x*scalex, y*scaley);
   //}
-  //
+  
 
   popMatrix();
 
@@ -252,7 +254,7 @@ void draw() {
 
 void mousePressed() {
   int step = 1;
-  if (index + step < wx_indranil.size()) {
+  if (index + step < wx.size()) {
     index+=step;
     if (savepdf) {
     }
