@@ -21,8 +21,8 @@ Plane plane;
 Plane indranil;
 PVector airplane, airport, airplane_indranil;
 
-int scenario = 32;
-int time_per_move = 2;
+int scenario = 14;
+int time_per_move = 4;
 //String beginfp = "/Volumes/31G/WxRouting/Scenario"+str(scenario)+"_"+str(time_per_move)+"/";
 String beginfp = "/Users/tomer/Documents/Processing/WxRoutingAnim/Edward/Scenario"+str(scenario)+"_"+str(time_per_move)+"/";
 //String beginfp_indranil = "/Volumes/31G/WxRouting/Indranil/";
@@ -179,21 +179,6 @@ void draw() {
   endShape();
   //
 
-  //RUNWAY
-  runway(int(airport.x) * scalex, int(airport.y) * scaley);
-  //
-  //DRAW AIRPLANE
-  if (samespace.mag() == 0) {
-
-    //indranil.show(scalex/8, scaley/8);
-    //plane.show(scalex/8, scaley/8);
-    plane.show(scalex/4, scaley/4, true, true);
-    indranil.show(scalex/4, scaley/4, true, false);
-  } else {
-    plane.show(scalex/4, scaley/4, false, false);
-    indranil.show(scalex/4, scaley/4, false, false);
-  }
-  //
 
   // CLOUDS
   for (int i=0; i<table.getRowCount(); i++) {
@@ -212,6 +197,22 @@ void draw() {
     //text(v, x*scalex, y*scaley);
     rectMode(CORNER);
   }
+  
+    //RUNWAY
+  runway(int(airport.x) * scalex, int(airport.y) * scaley);
+  //
+  //DRAW AIRPLANE
+  if (samespace.mag() == 0) {
+
+    //indranil.show(scalex/8, scaley/8);
+    //plane.show(scalex/8, scaley/8);
+    plane.show(scalex/4, scaley/4, true, true);
+    indranil.show(scalex/4, scaley/4, true, false);
+  } else {
+    plane.show(scalex/4, scaley/4, false, false);
+    indranil.show(scalex/4, scaley/4, false, false);
+  }
+  //
 
   //table = wx_indranil_table;
   //for (int i=0; i<table.getRowCount(); i++) {
