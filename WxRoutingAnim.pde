@@ -31,7 +31,7 @@ File[] files = new File(dataPath(beginfp)).listFiles();
 File[] files_indranil = new File(dataPath(beginfp_indranil)).listFiles();
 
 String pdf = "images/" + str(scenario) + "_" + str(time_per_move) + ".pdf";
-boolean savepdf = false;
+boolean savepdf = true;
 
 
 
@@ -39,8 +39,8 @@ boolean savepdf = false;
 
 void setup() {
 
-  //size(495, 350, PDF, pdf); 
-  size(495, 350); 
+  size(495, 350, PDF, pdf); 
+  //size(495, 350); 
 
   shapeMode(CENTER);
   plane = new Plane(0, 0, 0);
@@ -234,7 +234,7 @@ void draw() {
   popMatrix();
 
   if (savepdf) {
-    if (index + 1 < wx.size()) {
+    if (index + 1 < state_indranil.getRowCount()) {
       PGraphicsPDF pdf = (PGraphicsPDF) g; 
       pdf.nextPage();
 
@@ -255,7 +255,7 @@ void draw() {
 
 void mousePressed() {
   int step = 1;
-  if (index + step < wx.size()) {
+  if (index + step < state_indranil.getRowCount()) {
     index+=step;
     if (savepdf) {
     }
