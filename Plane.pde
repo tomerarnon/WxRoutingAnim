@@ -17,21 +17,11 @@ class Plane {
     this.dir = d;
   }
 
-  void show(float sizex, float sizey, boolean half, boolean side) {
+  void show(float sizex, float sizey) {
     pushMatrix();
     translate(this.pos.x, this.pos.y);
     fill(255-fill);    // circle fill
     strokeWeight(1);
-    //stroke(fill);      // circle stroke
-    ////noStroke();
-    //if (half) {
-    //  if(side){
-    //    rotate(PI);
-    //  }
-    //  arc(0, 0, sizex, sizey, HALF_PI, 3*HALF_PI, OPEN);
-    //} else {
-    //  ellipse(0, 0, sizex*3.7, sizey*3.7);
-    //}
 
     if (this.dir.equals("S")) {
       rotate(PI);
@@ -58,10 +48,24 @@ class Plane {
     endShape();
     popMatrix();
 
-
     popMatrix();
   }
 
+  void avoid(Plane other, String _dir) {
+    PVector dist = PVector.sub(this.pos, other.pos);
+    if (dist.mag() == 0) {
+      if (_dir.equals("up")) {
+        this.pos.y += (0.3 * scaley);
+        other.pos.y -= (0.3 * scaley);
+      }
+      if (_dir.equals("down")) {
+        this.pos.y -= (0.3 * scaley);
+        other.pos.y += (0.3 * scaley);
+
+        println("moved");
+      }
+    }
+  }
 
 
 
@@ -90,11 +94,6 @@ class Plane {
     }
     ////
 
-    //triangle(toppoint.x, toppoint.y, 
-    //  leftpoint.x, leftpoint.y, 
-    //  rightpoint.x, rightpoint.y);
-    //
-
     //// Red triangle overlay
     PVector lpt = PVector.mult(leftpoint, 0.5);   //midpoint of the left side
     PVector rpt = PVector.mult(rightpoint, 0.5);  // midpoint of the right side
@@ -119,7 +118,7 @@ class Plane {
         triangle(rpt.x, rpt.y, rightpoint.x, rightpoint.y, rpt.x, rightpoint.y);
       }
 
-      // if right in front
+      // if straight ahead
       if (b[i].equals("1") && i==2) {
         rectMode(CORNERS);
         rect(lpt.x+2, lpt.y-2, rpt.x-2, rightpoint.y);

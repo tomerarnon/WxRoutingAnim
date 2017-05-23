@@ -1,8 +1,8 @@
 
 void runway(int x, int y) {
   rectMode(CENTER);
-  float x_offset = scalex/3;
-  float y_offset = scaley/3;  
+  //float x_offset = scalex/3;
+  //float y_offset = scaley/3;  
   stroke(0, 255);
   strokeWeight(10);
   pushMatrix();
@@ -13,22 +13,63 @@ void runway(int x, int y) {
 
   fill(0);
   noStroke();
-  ellipse(0,0, scalex/3, scaley/3);
+  ellipse(0, 0, scalex/3, scaley/3);
 
   noFill();
   strokeWeight(2);
   stroke(0);
-  ellipse(0,0, scalex/1.3, scaley/1.3);
+  ellipse(0, 0, scalex/1.3, scaley/1.3);
 
   popMatrix();
   rectMode(CORNER);
 }
 
 
+void Path(ArrayList<Table> statedata, int index) {
+  strokeJoin(ROUND);
+  beginShape();
+  noFill();
+  for (int i=index; i<statedata.size(); i++) {
+    staterow = statedata.get(i).getRow(0);
+    float current_x= staterow.getInt(3)-1;
+    float current_y= staterow.getInt(2)-1;
+    if (i==index && i<statedata.size()-1) {
+      current_x = adjustx(current_x, statedata.get(index+1).getRow(0).getString(4));
+      current_y = adjusty(current_y, statedata.get(index+1).getRow(0).getString(4));
+    }
+    airplane = new PVector(current_x, current_y);
+
+    stroke(0);
+    strokeWeight(3);
+    vertex(airplane.x * scalex, airplane.y * scaley);
+  }
+  endShape();
+}
+
+void Path_indranil(Table statedata, int index) {
+  strokeJoin(ROUND);
+  beginShape();
+  noFill();
+  for (int i=index; i<statedata.getRowCount(); i++) {
+    staterow = statedata.getRow(i);
+    float current_x= staterow.getInt(1)-1;
+    float current_y= staterow.getInt(2)-1;
+    if (i==index && i<statedata.getRowCount()-1) {
+      current_x = adjustx(current_x, statedata.getRow(index+1).getString(3));
+      current_y = adjusty(current_y, statedata.getRow(index+1).getString(3));
+    }
+    airplane = new PVector(current_x, current_y);
+
+    stroke(255,0,0);
+    strokeWeight(3);
+    vertex(airplane.x * scalex, airplane.y * scaley);
+  }
+  endShape();
+}
 
 
 
-
+//// oldstyle of runway
 //void runway(int x, int y) {
 //  rectMode(CENTER);
 //  float x_offset = scalex * 0.1;
@@ -73,10 +114,6 @@ void runway(int x, int y) {
 //  popMatrix();
 //  rectMode(CORNER);
 //}
-
-
-
-
 
 
 
