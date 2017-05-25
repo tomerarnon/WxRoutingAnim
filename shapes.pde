@@ -11,13 +11,13 @@ void runway(int x, int y) {
   //line(-x_offset, y_offset, x_offset, -y_offset);
   //line(-x_offset, -y_offset, x_offset, y_offset);
 
-  fill(0);
+  fill(255);
   noStroke();
   ellipse(0, 0, scalex/3, scaley/3);
 
   noFill();
   strokeWeight(2);
-  stroke(0);
+  stroke(255);
   ellipse(0, 0, scalex/1.3, scaley/1.3);
 
   popMatrix();
@@ -29,7 +29,7 @@ void Path(ArrayList<Table> statedata, int index) {
   strokeJoin(ROUND);
   beginShape();
   noFill();
-  for (int i=index; i<statedata.size(); i++) {
+  for (int i=index+1; i<statedata.size(); i++) {
     staterow = statedata.get(i).getRow(0);
     float current_x= staterow.getInt(3)-1;
     float current_y= staterow.getInt(2)-1;
@@ -39,7 +39,7 @@ void Path(ArrayList<Table> statedata, int index) {
     }
     airplane = new PVector(current_x, current_y);
 
-    stroke(0);
+    stroke(255);
     strokeWeight(3);
     vertex(airplane.x * scalex, airplane.y * scaley);
   }
@@ -60,11 +60,40 @@ void Path_indranil(Table statedata, int index) {
     }
     airplane = new PVector(current_x, current_y);
 
-    stroke(255,0,0);
+    stroke(255, 0, 0);
     strokeWeight(3);
     vertex(airplane.x * scalex, airplane.y * scaley);
   }
   endShape();
+}
+
+
+void unitsquare(ArrayList<PVector> square, float n) {
+  // Bottom
+  for (float x = 1; x > -1; x -= n) {
+    square.add(new PVector(x, 1));
+  }
+  // Left side
+  for (float y = 1; y > -1; y -= n) {
+    square.add(new PVector(-1, y));
+  }  // Top of square
+  for (float x = -1; x < 1; x += n) {
+    square.add(new PVector(x, -1));
+  }
+  // Right side
+  for (float y = -1; y < 1; y += n) {
+    square.add(new PVector(1, y));
+  }
+}
+
+void chevron(){
+     //beginShape();
+    //vertex(0, -sizex/2);
+    //vertex(-sizex, -sizey);
+    //vertex(0, sizex-1);
+    //vertex(sizex, -sizey);
+    //vertex(0, -sizex/2);
+    //endShape(); 
 }
 
 
