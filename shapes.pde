@@ -86,14 +86,14 @@ void unitsquare(ArrayList<PVector> square, float n) {
   }
 }
 
-void chevron(){
-     //beginShape();
-    //vertex(0, -sizex/2);
-    //vertex(-sizex, -sizey);
-    //vertex(0, sizex-1);
-    //vertex(sizex, -sizey);
-    //vertex(0, -sizex/2);
-    //endShape(); 
+void chevron(float sizex, float sizey){
+     beginShape();
+    vertex(0, -sizex/2);
+    vertex(-sizex, -sizey);
+    vertex(0, sizex-1);
+    vertex(sizex, -sizey);
+    vertex(0, -sizex/2);
+    endShape(); 
 }
 
 

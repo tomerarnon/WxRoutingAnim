@@ -1,24 +1,62 @@
 class Plane {
   PVector pos;
+  PVector next, lookAhead;
   PShape airplane = loadShape("Objects/Airplane_silhouette.svg");
-  String dir = "E";
+  String dir = "N";
   int fill;
   Float angle;
 
   Plane(float x, float y, int fill) {
     this.pos = new PVector(0, 0);
     this.pos.x = x;
-    this.pos.x = y;
+    this.pos.y = y;
     this.fill = fill;
-    this.angle = null;
+    this.angle = vecFromString(dir).heading();
   }
 
-  void update(float x, float y, String d, String dnext, float stepsize) {
-    this.pos.x = x;
-    this.pos.y = y;
-    this.dir = d;
-    this.angle = turn(d, dnext, stepsize);
+  void update(String step1, String step2) {
+    next = vecFromString(step1);
+    next.mult(1/lps);
+    if (!(step1.equals(step2))) {     // if we've got a turn coming up:
+      lookAhead = vecFromString(step2);
+      lookAhead.mult(1/lps);
+      if (PVector.angleBetween(next, lookAhead)<PI) {    // if it isn't a full reverse, do this:
+        float theta = (PI/40) * ((frameCount-1)%lps);
+        println(theta/PI);
+        lookAhead.mult(sin(theta));
+        next.mult(cos(theta));
+        next.add(lookAhead);
+      }
+    }
+    this.angle = next.heading();
+    this.pos.add(next);
   }
+
+
+  PVector vecFromString(String d) {
+    float angle = HALF_PI;
+    PVector vec;
+    float mag = scaley;
+    if (d.equals("S")) {
+      angle = -HALF_PI;
+    } else if (d.equals("E")) {
+      angle = PI;
+      mag = scalex;
+    } else if (d.equals("W")) {
+      angle = 0;
+      mag = scalex;
+    }
+    vec = PVector.fromAngle(angle);
+    vec.setMag(mag);
+    vec.rotate(PI);
+    return vec;
+  }
+
+  //PVector arcDelta(PVector r, float inc) {
+  //  PVector arc = r 
+
+  //    return arc;
+  //}
 
   float turn(String d, String dnext, float stepsize) {
     float angle = 0;
@@ -74,7 +112,7 @@ class Plane {
     //stroke(fill);
     //ellipse(0, 0, 4*sizex, 4*sizey);
 
-    rotate(this.angle);
+    rotate(this.angle - HALF_PI);
     rotate(-QUARTER_PI);      // the plane image is diagonal
     rotate(PI);              // and backwards...
     airplane.disableStyle();
@@ -83,7 +121,7 @@ class Plane {
     //stroke(255);
     shapeMode(CENTER);
     shape(airplane, 0, 0, sizex*2, sizey*2);
-    //chevron();
+    //chevron(sizex, sizey);
     popMatrix();
   }
 

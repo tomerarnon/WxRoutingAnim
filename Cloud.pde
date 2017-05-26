@@ -1,7 +1,8 @@
 class Cloud {
   PVector pos;
   float value;
-  PShape shape = createShape();
+  //PShape shape = createShape();
+  PShape cir;
   boolean survives;
   Cloud[] neighbors;
   ArrayList<PShape> circles = new ArrayList<PShape>();
@@ -25,7 +26,7 @@ class Cloud {
     this.value = _value;
     //circles = new ArrayList<PShape>();
     //populate();
-    decimate();
+    //decimate();
   }
 
   //PShape randomShape() {
@@ -64,9 +65,9 @@ class Cloud {
   void show() {
     pushMatrix();
     translate(this.pos.x, this.pos.y);
-    translate(scalex/2, scaley/2);
+    translate(scalex/4, scaley/4);
     for (int i =0; i<circles.size(); i++) {
-      PShape cir = circles.get(i); 
+      cir = circles.get(i); 
       shape(cir);
     }
     popMatrix();
@@ -75,89 +76,90 @@ class Cloud {
   void populate() {
     float w = scalex;
     float h = scaley;
-    for (int i=0; i<int(this.value*200); i++) {
-      PShape cir = makeCircle(w, h); 
+    for (int i=0; i<int(this.value*100); i++) {
+      cir = makeCircle(w, h); 
       circles.add(cir);
     }
   }
 
-  void decimate() {
-    float w = scalex;
-    float h = scaley;
-    for (int i=0; i<2; i++) {
-      PShape cir = makeCircle(w, h); 
-      circles.remove(i);
-      circles.add(cir);
-    }
-  }
+  //void decimate() {
+  //  float w = scalex;
+  //  float h = scaley;
+  //  for (int i=0; i<int(this.value); i++) {
+  //    cir = makeCircle(w, h); 
+  //    circles.remove(i);
+  //    circles.add(cir);
+  //  }
+  //}
 
   PShape makeCircle(float w, float h) {
     float randy = random(-w/2, w/2);
     float randx = random(-h/2, h/2);
-    float randrad1 = random(1) * w/1.3;
-    float randrad2 = random(1) * h/1.3;
-    float fillcol = map(this.value, 1, 7, 220, 40);
-    fillcol += random(-30, 30);
-    PShape cir = createShape(ELLIPSE, randx, randy, randrad1, randrad2);
-    cir.setFill(color(fillcol, 20));
+    float randrad1 = random(1) * w/2;
+    float randrad2 = random(1) * h/2;
+    //float fillcol = map(this.value, 1, 7, 220, 40);
+    //fillcol += random(-30, 30);
+    cir = createShape(ELLIPSE, randx, randy, randrad1, randrad2);
+    cir.setFill(color(random(40, 250), 50));
+    //cir.setFill(color(fillcol, 5));
     cir.setStrokeWeight(0);
     return cir;
   }
 
 
 
-  void lerpshape() {
-    pushMatrix();
-    translate(this.pos.x, this.pos.y);
-    int vcount = this.shape.getVertexCount();
-    float iter = 2;
-    for (float j = iter; j>=0; j--) {
-      for (int n = 0; n < 4; n++) {
-        color col = lerpFill(n, map(j/iter, 0, 1, 0.1, 1));
-        fill(color(col), 255);
-        noStroke();
-        lerpSection(n*vcount/4, (n+1)*vcount/4, j/iter);
-      }
-    }
-    popMatrix();
-  }
+  //  void lerpshape() {
+  //    pushMatrix();
+  //    translate(this.pos.x, this.pos.y);
+  //    int vcount = this.shape.getVertexCount();
+  //    float iter = 2;
+  //    for (float j = iter; j>=0; j--) {
+  //      for (int n = 0; n < 4; n++) {
+  //        color col = lerpFill(n, map(j/iter, 0, 1, 0.1, 1));
+  //        fill(color(col), 255);
+  //        noStroke();
+  //        lerpSection(n*vcount/4, (n+1)*vcount/4, j/iter);
+  //      }
+  //    }
+  //    popMatrix();
+  //  }
 
-  void lerpSection(int start, int stop, float amt) {
-    beginShape(); 
-    vertex(0, 0);
-    if (stop < this.shape.getVertexCount()) {
-      for (int i = start; i <= stop; i++) {
-        PVector v = this.shape.getVertex(i); 
-        PVector vs = PVector.mult(unitsquare.get(i), 4*scalex/2); 
-        v.lerp(vs, amt/5); 
-        vertex(v.x, v.y);
-      }
-    } else {
-      for (int i = start; i <= stop; i++) {
-        int l = i% this.shape.getVertexCount();
-        PVector v = this.shape.getVertex(l); 
-        PVector vs = PVector.mult(unitsquare.get(l), 4*scalex/2); 
-        v.lerp(vs, amt/5); 
-        vertex(v.x, v.y);
-      }
-    }
+  //  void lerpSection(int start, int stop, float amt) {
+  //    beginShape(); 
+  //    vertex(0, 0);
+  //    if (stop < this.shape.getVertexCount()) {
+  //      for (int i = start; i <= stop; i++) {
+  //        PVector v = this.shape.getVertex(i); 
+  //        PVector vs = PVector.mult(unitsquare.get(i), 4*scalex/2); 
+  //        v.lerp(vs, amt/5); 
+  //        vertex(v.x, v.y);
+  //      }
+  //    } else {
+  //      for (int i = start; i <= stop; i++) {
+  //        int l = i% this.shape.getVertexCount();
+  //        PVector v = this.shape.getVertex(l); 
+  //        PVector vs = PVector.mult(unitsquare.get(l), 4*scalex/2); 
+  //        v.lerp(vs, amt/5); 
+  //        vertex(v.x, v.y);
+  //      }
+  //    }
 
-    endShape(CLOSE);
-  }
+  //    endShape(CLOSE);
+  //  }
 
-  color lerpFill(int n, float amt) {
-    color col;
-    if (this.neighbors[n] != null) {
-      col = lerpColor(this.c, this.neighbors[n].c, amt/2);
-    } else {
-      col = this.c;
-      //col = lerpColor(col, color(0, 0, 0), amt/2);
-    }
+  //  color lerpFill(int n, float amt) {
+  //    color col;
+  //    if (this.neighbors[n] != null) {
+  //      col = lerpColor(this.c, this.neighbors[n].c, amt/2);
+  //    } else {
+  //      col = this.c;
+  //      //col = lerpColor(col, color(0, 0, 0), amt/2);
+  //    }
 
-    col = lerpColor(col, color(#0A133E), amt/2);
+  //    col = lerpColor(col, color(#0A133E), amt/2);
 
-    return col;
-  }
+  //    return col;
+  //  }
 
   void checkForNeighbors() {
     this.neighbors[0] = null; 
