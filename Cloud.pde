@@ -76,7 +76,7 @@ class Cloud {
   void populate() {
     float w = scalex;
     float h = scaley;
-    for (int i=0; i<int(this.value*100); i++) {
+    for (int i=0; i<int(this.value*10); i++) {
       cir = makeCircle(w, h); 
       circles.add(cir);
     }

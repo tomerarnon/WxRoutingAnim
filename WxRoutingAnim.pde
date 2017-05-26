@@ -19,7 +19,8 @@ ArrayList<PVector> unitsquare = new ArrayList<PVector>();
 int scenario = 14;
 int time_per_move = 4;
 int index=0;
-String beginfp = "/Users/tarnon/Documents/Processing/WxRoutingAnim/Edward/Scenario"+str(scenario)+"_"+str(time_per_move)+"/";
+//String beginfp = "/Users/tarnon/Documents/Processing/WxRoutingAnim/Edward/Scenario"+str(scenario)+"_"+str(time_per_move)+"/";
+String beginfp = "/C:/Users/Tomer/Documents/Processing/WxRoutingAnim/Edward/Scenario"+str(scenario)+"_"+str(time_per_move)+"/";
 File[] files = new File(dataPath(beginfp)).listFiles(); 
 String pdf = "images/" + str(scenario) + "_" + str(time_per_move) + ".pdf";
 
@@ -32,9 +33,9 @@ Float lps = 20.0;     // lerps per step
 
 void setup() {
   //size(495, 350, PDF, pdf); 
-  size(600, 400, P2D); 
+  size(1200, 800, P2D); 
   if (!savepdf) {
-    frameRate(60);
+    frameRate(40);
   }
   smooth();
   shapeMode(CENTER);
@@ -144,7 +145,7 @@ void draw() {
 
   // grid lines
   strokeWeight(1);
-  stroke(150, 50);
+  stroke(150, 150);
   for (int j=0; j < cols; j++) {
     line(-100, j*scaley + scaley/2, width+100, j*scaley + scaley/2);
   }

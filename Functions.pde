@@ -42,3 +42,9 @@ float adjusty(float y, String h) {
   }
   return y;
 }
+
+
+
+float round(float number, float decimal) {
+    return (float)(round((number*pow(10, decimal))))/pow(10, decimal);
+} 
