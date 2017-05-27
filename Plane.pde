@@ -6,9 +6,12 @@ class Plane { //<>// //<>// //<>//
   int fill;
   Float angle;
   int turnCount;
-  boolean turn= false;
-  float f = 0.4;
+  boolean turn = false;
+  float f = 0.5;
   float dT = PI/(4*lps*f);
+  float theta;
+  float radius = scalex * f;
+  float mag = radius * dT;
 
   Plane(float x, float y, int fill) {
     this.pos = new PVector(0, 0);
@@ -16,50 +19,38 @@ class Plane { //<>// //<>// //<>//
     this.pos.y = y;
     this.fill = fill;
     this.angle = vecFromString(dir).heading();
-    this.turnCount = 0;
+    this.turnCount = 1;
     this.turn = false;
   }
 
   void update(String step1, String step2) {      // "N", "E"
-    float theta = -1;
+    theta = -1;
     if (this.turn) {
       theta = this.turnCount*dT; 
       this.turnCount += 1;
-      if (this.turnCount == int(2*lps*f)) {
+      //if (this.turnCount == int(2*lps*f)) {
+      if (theta >= PI/2) {
         this.turn = false;
-        this.turnCount = 0;
+        this.turnCount = 1;
       }
-      //float radius = scalex * f/lps;
-      //float dx = radius * cos(theta);
-      //float dy = radius * sin(theta);
-      PVector lA = PVector.mult(this.lookAhead, sin(theta));
-      PVector n = PVector.mult(this.next, cos(theta));
-      n.add(lA);
-      print("||| next: ", nfc(n.x, 3), ", ", nfc(n.y, 3));
-      print("||| Theta: ", nfc(theta/PI, 5));
+      PVector n = PVector.add( PVector.mult(this.lookAhead, sin(theta)), PVector.mult(this.next, cos(theta))); 
+      n.setMag(mag);
       this.angle = n.heading();
       this.pos.add(n);
-      //this.angle = new PVector(dx,dy).heading();
-      //this.pos.x += dx;
-      //this.pos.y += dy;
     } else {
       this.next = vecFromString(step1);
       this.lookAhead = vecFromString(step2);
       this.next.mult(1/lps);
-      print("||| next: ", nfc(this.next.x, 3), ", ", nfc(this.next.y, 3));
       this.lookAhead.mult(1/lps);
       this.pos.add(next);
       this.angle = next.heading();
-      if (!(step1.equals(step2)) && ((frameCount)%lps == int(lps*(1-f)))) {     // if we've got a turn coming up:
+      if (!(step1.equals(step2)) && ((frameCount-1)%lps == int(lps*(1-f)))) {     // if we've got a turn coming up:
         if (PVector.angleBetween(this.next, this.lookAhead)<PI) {    // if it isn't a full reverse, do this:
           this.turn = true;
         }
-        this.turn = true;
+        //this.turn = true;
       }
     }
-    if (theta == -1) print("||| Theta: ", nfc(theta, 5));
-    print("||| ", nfc((frameCount-1)%lps, 1), "; ");
-    println("||| ", "pos: ", int(this.pos.x), ", ", int(this.pos.y));
   }
 
 
