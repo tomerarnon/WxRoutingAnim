@@ -2,13 +2,11 @@ import processing.pdf.*;
 
 PFont font;
 Table table, statetable;
-TableRow row_indranil, staterow; //statetable is a single row; this structure for it makes getting values more concise
+TableRow staterow; //statetable is a single row; this structure for it makes getting values more concise
 ArrayList<Table> wx =  new ArrayList<Table>();      // array list of Edward's weather states
 ArrayList<Table> state =  new ArrayList<Table>();    // array list of Edward's states
 // state Table format -> [Index, Binary(radar detection state), plane_x, plane_y, heading, airport_x, airport_y, wind speed, wind direction (degrees clockwise from south), airspace size_x, airspace size_y]
 //                        [ 0,        1,                          2,        3,       4,        5,        6,            7,          8,                                              9,                  10    ] 
-
-Table wx_indranil_table, state_indranil;
 
 int rows, cols, scalex, scaley;
 Plane plane;
@@ -18,7 +16,7 @@ ArrayList<PVector> unitsquare = new ArrayList<PVector>();
 
 int scenario = 14;
 int time_per_move = 4;
-int index=0;
+int index=6;
 //String beginfp = "/Users/tarnon/Documents/Processing/WxRoutingAnim/Edward/Scenario"+str(scenario)+"_"+str(time_per_move)+"/";
 String beginfp = "/C:/Users/Tomer/Documents/Processing/WxRoutingAnim/Edward/Scenario"+str(scenario)+"_"+str(time_per_move)+"/";
 File[] files = new File(dataPath(beginfp)).listFiles(); 
@@ -35,7 +33,7 @@ void setup() {
   //size(495, 350, PDF, pdf); 
   size(1200, 800, P2D); 
   if (!savepdf) {
-    frameRate(40);
+    frameRate(60);
   }
   smooth();
   shapeMode(CENTER);
@@ -54,7 +52,7 @@ void setup() {
     }
   }
   // set some global stuff from this data
-  TableRow r = state.get(0).getRow(0);
+  TableRow r = state.get(index).getRow(0);
   airport = new PVector(r.getInt(5)-1, r.getInt(6)-1);
   rows = r.getInt(10);
   cols = r.getInt(9);
@@ -75,8 +73,8 @@ void setup() {
   //  c.checkForNeighbors();
   //}
 
-  font = createFont("Arial-Black", 25);
-  textFont(font, 18);
+  //font = createFont("Arial-Black", 25);
+  //textFont(font, 18);
 }
 
 
@@ -107,7 +105,7 @@ void draw() {
   for (Cloud c : clouds) {    // reset all of the survives values
     c.survives = false;
   }
-  
+
   float x, y, value;
   PVector newpos;
   for (int i=0; i<table.getRowCount(); i++) {    // go row by row of new data
@@ -146,21 +144,17 @@ void draw() {
   // grid lines
   strokeWeight(1);
   stroke(150, 150);
-  for (int j=0; j < cols; j++) {
-    line(-100, j*scaley + scaley/2, width+100, j*scaley + scaley/2);
-  }
-  for (int i=0; i < rows; i++) {
-    line(i*scalex + scalex/2, -100, i*scalex + scalex/2, height+100);
-  }
+  for (int j=0; j < cols; j++) line(-100, j*scaley + scaley/2, width+100, j*scaley + scaley/2);
+  for (int i=0; i < rows; i++) line(i*scalex + scalex/2, -100, i*scalex + scalex/2, height+100);
 
   shapeMode(CENTER);
   for (Cloud c : clouds) {
     c.show();
   }
 
-  //Path(state, index);
-  runway(int(airport.x) * scalex, int(airport.y) * scaley);
-  plane.show(scalex/4, scaley/4);
+  //Path(state, index);                                       // path to airport
+  runway(int(airport.x) * scalex, int(airport.y) * scaley);   // airport
+  plane.show(scalex/4, scaley/4, staterow.getString(1));      // plane
   popMatrix();
 
 
@@ -183,8 +177,8 @@ void draw() {
   }
 
   if (saveframe) {
-    if (index<10) saveFrame("images/" + str(scenario) + "_" + str(time_per_move) + "/"  + "0" + str(index) + "_" + "###" + ".png");
-    else saveFrame("images/" + str(scenario) + "_" + str(time_per_move) + "/"  + str(index) + "_" + "###" + ".png");
+    if (index<10)  saveFrame("images/" + str(scenario) + "_" + str(time_per_move) + "/"  + "0" + str(index) + "_" + "###" + ".png");
+    else           saveFrame("images/" + str(scenario) + "_" + str(time_per_move) + "/"  + str(index) + "_" + "###" + ".png");
   }
   //noLoop();
 }
@@ -196,7 +190,7 @@ void draw() {
 
 void mousePressed() {
   //int step = 1;
-  if (index + 1 > wx.size())  index=0;
+  if (index + 1 > wx.size()) index=0;
   redraw();
 }
 

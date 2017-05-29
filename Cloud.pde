@@ -76,7 +76,7 @@ class Cloud {
   void populate() {
     float w = scalex;
     float h = scaley;
-    for (int i=0; i<int(this.value*10); i++) {
+    for (int i=0; i<int(100+this.value*20); i++) {
       cir = makeCircle(w, h); 
       circles.add(cir);
     }
@@ -95,12 +95,12 @@ class Cloud {
   PShape makeCircle(float w, float h) {
     float randy = random(-w/2, w/2);
     float randx = random(-h/2, h/2);
-    float randrad1 = random(1) * w/2;
-    float randrad2 = random(1) * h/2;
+    float randrad1 = random(1) * w;
+    float randrad2 = random(1) * h;
     //float fillcol = map(this.value, 1, 7, 220, 40);
     //fillcol += random(-30, 30);
     cir = createShape(ELLIPSE, randx, randy, randrad1, randrad2);
-    cir.setFill(color(random(40, 250), 50));
+    cir.setFill(color(random(40, 250), 10));
     //cir.setFill(color(fillcol, 5));
     cir.setStrokeWeight(0);
     return cir;

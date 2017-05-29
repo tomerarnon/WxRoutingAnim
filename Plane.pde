@@ -7,7 +7,7 @@ class Plane { //<>// //<>// //<>//
   Float angle;
   int turnCount;
   boolean turn = false;
-  float f = 0.5;
+  float f = 0.4;
   float dT = PI/(4*lps*f);
   float theta;
   float radius = scalex * f;
@@ -28,27 +28,34 @@ class Plane { //<>// //<>// //<>//
     if (this.turn) {
       theta = this.turnCount*dT; 
       this.turnCount += 1;
-      //if (this.turnCount == int(2*lps*f)) {
-      if (theta >= PI/2) {
-        this.turn = false;
-        this.turnCount = 1;
+      if (PVector.angleBetween(this.next, this.lookAhead)<PI) {    // if it isn't a full reverse, do this:
+        //if (this.turnCount == int(2*lps*f)) {
+        if (theta >= PI/2) {
+          this.turn = false;
+          this.turnCount = 1;
+        }
+        PVector n = PVector.add(PVector.mult(this.lookAhead, sin(theta)), PVector.mult(this.next, cos(theta))); 
+        n.setMag(mag);
+        this.angle = n.heading();
+        this.pos.add(n);
+      } else {
+        theta = this.turnCount*dT; 
+        this.turnCount += 1;
+        //if (this.turnCount == int(2*lps*f)) {
+        if (theta >= PI) {
+          this.turn = false;
+          this.turnCount = 1;
+        }
       }
-      PVector n = PVector.add( PVector.mult(this.lookAhead, sin(theta)), PVector.mult(this.next, cos(theta))); 
-      n.setMag(mag);
-      this.angle = n.heading();
-      this.pos.add(n);
     } else {
-      this.next = vecFromString(step1);
-      this.lookAhead = vecFromString(step2);
-      this.next.mult(1/lps);
-      this.lookAhead.mult(1/lps);
-      this.pos.add(next);
+      this.next = vecFromString(step1).mult(1/lps);
+      this.lookAhead = vecFromString(step2).mult(1/lps);
+      this.pos.add(this.next);
       this.angle = next.heading();
       if (!(step1.equals(step2)) && ((frameCount-1)%lps == int(lps*(1-f)))) {     // if we've got a turn coming up:
-        if (PVector.angleBetween(this.next, this.lookAhead)<PI) {    // if it isn't a full reverse, do this:
-          this.turn = true;
-        }
-        //this.turn = true;
+        //if (PVector.angleBetween(this.next, this.lookAhead)<PI) {    // if it isn't a full reverse, enter the turn state:
+        this.turn = true;
+        //}
       }
     }
   }
@@ -73,65 +80,15 @@ class Plane { //<>// //<>// //<>//
     return vec;
   }
 
-  //PVector arcDelta(PVector r, float inc) {
-  //  PVector arc = r 
-
-  //    return arc;
-  //}
-
-  float turn(String d, String dnext, float stepsize) {
-    float angle = 0;
-    if (this.angle==null) {
-      angle += PI;
-      if (d.equals("S")) {
-        angle += PI;
-      } else if (d.equals("E")) {
-        angle += HALF_PI;
-      } else if (d.equals("W")) {
-        angle -= HALF_PI;
-      }
-    } else { 
-      angle = this.angle;
-    }
-    //angle -= QUARTER_PI;      // the plane image is diagonal
-
-    float anglenext = 0.0;
-    anglenext += PI;
-    if (dnext.equals("S")) {
-      anglenext += PI;
-    } else if (dnext.equals("E")) {
-      anglenext += HALF_PI;
-    } else if (dnext.equals("W")) {
-      anglenext -= HALF_PI;
-    }
-
-    //angle = angle % TWO_PI;
-    //anglenext = anglenext % TWO_PI;
-
-    if ((abs(angle-anglenext) <= PI/2) || ((abs(angle-anglenext)-PI) <= PI/2)) {
-      if (stepsize >= (lps-5)/lps) {
-        if (stepsize>0.9) { 
-          stepsize = 1.0;
-        } else { 
-          stepsize /= 2;
-        }
-        angle = lerp(angle, anglenext, stepsize);
-      }
-    } else if (stepsize >= (lps-1)/lps) {
-      angle = (angle + PI)%TWO_PI;
-    }
-    return angle;
-  }
 
 
-
-  void show(float sizex, float sizey) {
+  void show(float sizex, float sizey, String binary) {
     pushMatrix();
     translate(this.pos.x, this.pos.y);
     //fill(255-fill);    // circle fill
-    //strokeWeight(1);
-    //stroke(fill);
-    //ellipse(0, 0, 4*sizex, 4*sizey);
+    strokeWeight(1);
+    stroke(fill);
+    ellipse(0, 0, 3*sizex, 3*sizey);
 
     rotate(this.angle - HALF_PI);
     rotate(-QUARTER_PI);      // the plane image is diagonal
@@ -141,7 +98,8 @@ class Plane { //<>// //<>// //<>//
     //strokeWeight(2);
     //stroke(255);
     shapeMode(CENTER);
-    shape(airplane, 0, 0, sizex*2, sizey*2);
+    shape(airplane, 0, 0, sizex*1.5, sizey*1.5);
+    radar(binary);
     //chevron(sizex, sizey);
     popMatrix();
   }
@@ -164,17 +122,9 @@ class Plane { //<>// //<>// //<>//
 
   void radar(String binary) {
     pushMatrix();
-    translate(this.pos.x, this.pos.y);
-    if (this.dir.equals("S")) {
-      rotate(PI);
-    } else if (this.dir.equals("E")) {
-      rotate(HALF_PI);
-    } else if (this.dir.equals("W")) {
-      rotate(-HALF_PI);
-    }
-
+    rotate(PI/4);
     //// Basic green triangle
-    PVector toppoint = new PVector(0, -0.1*scalex);
+    PVector toppoint = new PVector(0, -0.2*scalex);      // think of this as (0,0)...
     PVector rightpoint = new PVector(1.5*scalex, -(2.*scaley));
     PVector leftpoint = new PVector(-1.5*scalex, -(2.*scaley));
     noStroke();
@@ -182,14 +132,14 @@ class Plane { //<>// //<>// //<>//
     for (float t=0; t<1; t+=0.01) {
       fill(0, 255, 0, 2);
       triangle(toppoint.x, toppoint.y, 
-        leftpoint.x*t*1.4*t, leftpoint.y*t*1.2, 
-        rightpoint.x*t*1.4*t, rightpoint.y*t*1.2);
+        leftpoint.x*1.4*t*t, leftpoint.y*t*1.2, 
+        rightpoint.x*1.4*t*t, rightpoint.y*t*1.2);
     }
     ////
 
     //// Red triangle overlay
-    PVector lpt = PVector.mult(leftpoint, 0.5);   //midpoint of the left side
-    PVector rpt = PVector.mult(rightpoint, 0.5);  // midpoint of the right side
+    PVector lpmp = PVector.mult(leftpoint, 0.5);   //midpoint of the left side
+    PVector rpmp = PVector.mult(rightpoint, 0.5);  // midpoint of the right side
     String[] b = new String[binary.length()];
 
     fill(255, 0, 0, 100);           // fill for the detected state
@@ -201,20 +151,20 @@ class Plane { //<>// //<>// //<>//
       // if closest to plane
       if (b[i].equals("1") && i==0) {
         fill(255, 0, 0, 120);           
-        triangle(toppoint.x, toppoint.y, lpt.x, lpt.y, rpt.x, rpt.y);
+        triangle(toppoint.x, toppoint.y+5, lpmp.x+5, lpmp.y+5, rpmp.x-5, rpmp.y+5);
       }
       //if left of plane
       if (b[i].equals("1") && i==1) {
-        triangle(rpt.x, rpt.y, rightpoint.x, rightpoint.y, rpt.x, rightpoint.y);
+        triangle(rpmp.x, rpmp.y, rightpoint.x, rightpoint.y, rpmp.x, rightpoint.y);
       }
       // if farther ahead
       if (b[i].equals("1") && i==2) {
         rectMode(CORNERS);
-        rect(lpt.x+2, lpt.y-2, rpt.x-2, rightpoint.y);
+        rect(lpmp.x+5, lpmp.y-5, rpmp.x-5, rightpoint.y+5);
       }
       //if right of plane
       if (b[i].equals("1") && i==3) {
-        triangle(lpt.x, lpt.y, leftpoint.x, leftpoint.y, lpt.x, leftpoint.y);
+        triangle(lpmp.x, lpmp.y, leftpoint.x, leftpoint.y, lpmp.x, leftpoint.y);
       }
     }
     popMatrix();
