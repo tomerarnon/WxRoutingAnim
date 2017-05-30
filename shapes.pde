@@ -1,23 +1,23 @@
 
-void runway(int x, int y) {
+void runway(int x, int y, int fill) {
   rectMode(CENTER);
   //float x_offset = scalex/3;
   //float y_offset = scaley/3;  
-  stroke(0, 255);
-  strokeWeight(10);
+
   pushMatrix();
   translate(x, y);
-
+  //stroke(0, 255);
+  //strokeWeight(10);
   //line(-x_offset, y_offset, x_offset, -y_offset);
   //line(-x_offset, -y_offset, x_offset, y_offset);
 
-  fill(255);
+  fill(fill);
   noStroke();
   ellipse(0, 0, scalex/3, scaley/3);
 
   noFill();
   strokeWeight(2);
-  stroke(255);
+  stroke(fill);
   ellipse(0, 0, scalex/1.3, scaley/1.3);
 
   popMatrix();
@@ -147,15 +147,86 @@ void chevron(float sizex, float sizey){
 
 
 
-//void legend(int x, int y) {
-//  textAlign(CENTER, CENTER);
-//  translate(x, y);
+void legend(int x, int y) {
+  textAlign(CENTER, CENTER);
+  pushMatrix();
+  translate(x, y);
 
-//  fill(0);
-//  text("25-nmi", 0, 0);
+  fill(0);
+  text("25-nmi", 0, 0);
 
-//  stroke(0);
-//  strokeWeight(1);
-//  line(-scalex/2, 0, -scalex/3, 0);
-//  line(scalex/2, 0, scalex/3, 0);
-//}
+  stroke(0);
+  strokeWeight(1);
+  line(-scalex/2, 0, -scalex/3, 0);
+  line(scalex/2, 0, scalex/3, 0);
+  popMatrix();
+}
+
+
+
+void compass(float x, float y, int v, int dir) {
+
+  float sx = scalex*1;
+  float sy = scaley*1;
+  PVector w = PVector.fromAngle(radians(dir));
+  //println(degrees(w.heading()));
+  w.mult(sx*0.4);
+
+  pushMatrix();
+  
+  translate(x*scalex, y*scaley);
+
+  fill(0);
+  //stroke(205, 150, 50);
+  //strokeWeight(1);
+  noStroke();
+  ellipse(0, 0, sx, sy);
+  noFill();
+  //ellipse(0, 0, sx*0.95, sy*0.95);
+
+  // compass letters
+  textSize(12);
+  fill(255);
+  noStroke();
+  textAlign(CENTER, CENTER);
+  text("N", 0, - sy * 0.3);
+  text("S", 0, sy * 0.3);
+  text("E", sx * 0.3, 0);
+  text("W", - sx * 0.3, 0);
+
+  // windspeed
+  fill(0);
+  String string = "Wind: " + str(v) + "kn";
+  text(string, 0, -sy*0.65); 
+
+  // compass lines
+  stroke(255);
+  strokeWeight(1);
+  for (int t=0; t<360; t+=15) {
+    pushMatrix();
+    rotate(radians(t));
+    line(0, sy*0.4, 0, sy*0.48);
+    popMatrix();
+  }
+
+  // wind Arrow
+  pushMatrix();
+  
+  rotate(PI/2);
+  rotate(w.heading());
+  stroke(255);
+  fill(255, 0, 0);
+  strokeWeight(0.2);
+  rectMode(CENTER);
+  rect(w.mag()/2, 0, w.mag(), 2);
+  //line(5, 0, w.mag(), 0);
+  pushMatrix();
+  translate(w.mag(), 0);
+  //rotate(-w.heading());
+  triangle(0, 0, -sx/20, sy/30, -sx/20, -sy/30);
+  popMatrix();
+  
+  popMatrix();
+  
+  popMatrix();
+}

@@ -1,17 +1,16 @@
-class Plane { //<>// //<>// //<>//
+class Plane { //<>//
   PVector pos;
   PVector next, lookAhead;
   PShape airplane = loadShape("Objects/Airplane_silhouette.svg");
   String dir = "N";
   int fill;
-  Float angle;
-  int turnCount;
+  float angle;
   boolean turn = false;
   float f = 0.4;
-  float dT = PI/(4*lps*f);
+  float dT = 180/(4*lps*f);
   float theta;
   float radius = scalex * f;
-  float mag = radius * dT;
+  float mag = radius * dT * (PI/180);
 
   Plane(float x, float y, int fill) {
     this.pos = new PVector(0, 0);
@@ -19,32 +18,37 @@ class Plane { //<>// //<>// //<>//
     this.pos.y = y;
     this.fill = fill;
     this.angle = vecFromString(dir).heading();
-    this.turnCount = 1;
     this.turn = false;
   }
 
   void update(String step1, String step2) {      // "N", "E"
-    theta = -1;
     if (this.turn) {
-      theta = this.turnCount*dT; 
-      this.turnCount += 1;
-      if (PVector.angleBetween(this.next, this.lookAhead)<PI) {    // if it isn't a full reverse, do this:
-        //if (this.turnCount == int(2*lps*f)) {
-        if (theta >= PI/2) {
-          this.turn = false;
-          this.turnCount = 1;
-        }
-        PVector n = PVector.add(PVector.mult(this.lookAhead, sin(theta)), PVector.mult(this.next, cos(theta))); 
-        n.setMag(mag);
+      if (PVector.angleBetween(this.next, this.lookAhead)<PI) {    // if it's a 90 degree turn:
+        this.theta += dT;
+        // weighted sum of next and next-next (called lookAhead) using cos() and sin()
+        PVector n = PVector.add(PVector.mult(this.lookAhead, sin(radians(this.theta))), PVector.mult(this.next, cos(radians(this.theta)))); 
+        n.setMag(mag);              // mag is specified according to dS = r*dT
         this.angle = n.heading();
         this.pos.add(n);
-      } else {
-        theta = this.turnCount*dT; 
-        this.turnCount += 1;
-        //if (this.turnCount == int(2*lps*f)) {
-        if (theta >= PI) {
+        if (this.theta >= 90) {
           this.turn = false;
-          this.turnCount = 1;
+          this.theta = 0;
+        }
+      } else {                                                   // if this is a 180 degree turn:
+        this.theta += 2*dT;
+        PVector heading = PVector.fromAngle(this.angle);         // get the current heading (akin to velocity vector)
+        heading.setMag(mag);
+        PVector L = new PVector();
+        PVector.cross(heading, new PVector(0, 0, 1), L);          // perpendicular vector
+        L.mult(2*mag*mag/radius);                                   // |a| = v^2/r
+        L.add(heading);                                             // v_n ~ a + v_(n-1)  
+        //L.setMag(mag);                                            // dS = r*dT
+        this.angle = L.heading();
+        this.pos.add(L);
+        println(this.theta);
+        if (this.theta >= 150) {
+          this.turn = false;
+          this.theta = 0;
         }
       }
     } else {
@@ -52,10 +56,12 @@ class Plane { //<>// //<>// //<>//
       this.lookAhead = vecFromString(step2).mult(1/lps);
       this.pos.add(this.next);
       this.angle = next.heading();
-      if (!(step1.equals(step2)) && ((frameCount-1)%lps == int(lps*(1-f)))) {     // if we've got a turn coming up:
-        //if (PVector.angleBetween(this.next, this.lookAhead)<PI) {    // if it isn't a full reverse, enter the turn state:
+      //if (PVector.angleBetween(this.next, this.lookAhead) >= PI) {   
+      //  this.turn = true;
+      //}
+      //if (!(step1.equals(step2)) && ((frameCount-1)%lps == int(lps*(1-f))) && PVector.angleBetween(this.next, this.lookAhead) < PI) {     // if we've got a turn coming up && we've reached where the radius starts
+      if (!(step1.equals(step2)) && ((frameCount-1)%lps == int(lps*(1-f)))) {     // if we've got a turn coming up && we've reached where the radius starts
         this.turn = true;
-        //}
       }
     }
   }
@@ -85,16 +91,17 @@ class Plane { //<>// //<>// //<>//
   void show(float sizex, float sizey, String binary) {
     pushMatrix();
     translate(this.pos.x, this.pos.y);
-    //fill(255-fill);    // circle fill
-    strokeWeight(1);
+    fill(255-fill);    // circle fill
+    strokeWeight(2);
     stroke(fill);
-    ellipse(0, 0, 3*sizex, 3*sizey);
+    ellipse(0, 0, 2.5*sizex, 2.5*sizey);
 
     rotate(this.angle - HALF_PI);
-    rotate(-QUARTER_PI);      // the plane image is diagonal
-    rotate(PI);              // and backwards...
+    rotate(-QUARTER_PI);          // the plane image is diagonal
+    rotate(PI);                   // and backwards...
     airplane.disableStyle();
-    fill(fill, 255);     
+    fill(fill, 255);    
+    //stroke(255-fill);
     //strokeWeight(2);
     //stroke(255);
     shapeMode(CENTER);
@@ -123,7 +130,7 @@ class Plane { //<>// //<>// //<>//
   void radar(String binary) {
     pushMatrix();
     rotate(PI/4);
-    //// Basic green triangle
+    //// Green triangle underlay
     PVector toppoint = new PVector(0, -0.2*scalex);      // think of this as (0,0)...
     PVector rightpoint = new PVector(1.5*scalex, -(2.*scaley));
     PVector leftpoint = new PVector(-1.5*scalex, -(2.*scaley));
@@ -151,7 +158,7 @@ class Plane { //<>// //<>// //<>//
       // if closest to plane
       if (b[i].equals("1") && i==0) {
         fill(255, 0, 0, 120);           
-        triangle(toppoint.x, toppoint.y+5, lpmp.x+5, lpmp.y+5, rpmp.x-5, rpmp.y+5);
+        triangle(toppoint.x, toppoint.y-5, lpmp.x+5, lpmp.y+5, rpmp.x-5, rpmp.y+5);
       }
       //if left of plane
       if (b[i].equals("1") && i==1) {

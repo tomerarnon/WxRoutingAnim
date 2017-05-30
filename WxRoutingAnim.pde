@@ -1,6 +1,7 @@
 import processing.pdf.*;
 
 PFont font;
+PImage topo;
 Table table, statetable;
 TableRow staterow; //statetable is a single row; this structure for it makes getting values more concise
 ArrayList<Table> wx =  new ArrayList<Table>();      // array list of Edward's weather states
@@ -16,26 +17,28 @@ ArrayList<PVector> unitsquare = new ArrayList<PVector>();
 
 int scenario = 14;
 int time_per_move = 4;
-int index=6;
+String beginfp = "/Users/tomer/Documents/Processing/WxRoutingAnim/Edward/Scenario"+str(scenario)+"_"+str(time_per_move)+"/";
 //String beginfp = "/Users/tarnon/Documents/Processing/WxRoutingAnim/Edward/Scenario"+str(scenario)+"_"+str(time_per_move)+"/";
-String beginfp = "/C:/Users/Tomer/Documents/Processing/WxRoutingAnim/Edward/Scenario"+str(scenario)+"_"+str(time_per_move)+"/";
+//String beginfp = "/C:/Users/Tomer/Documents/Processing/WxRoutingAnim/Edward/Scenario"+str(scenario)+"_"+str(time_per_move)+"/";
 File[] files = new File(dataPath(beginfp)).listFiles(); 
 String pdf = "images/" + str(scenario) + "_" + str(time_per_move) + ".pdf";
 
 boolean savepdf = false;
-boolean saveframe = false;
+boolean saveframe = true;
 
-Float lps = 20.0;     // lerps per step
-
+Float lps = 40.0;     // lerps per step
+int index = 0;
 
 
 void setup() {
   //size(495, 350, PDF, pdf); 
-  size(1200, 800, P2D); 
+  size(900, 600, P2D); 
   if (!savepdf) {
-    frameRate(60);
+    frameRate(40);
   }
-  smooth();
+
+  topo = loadImage("Objects/gEarth.png");
+  topo.resize(width, height);
   shapeMode(CENTER);
   unitsquare(unitsquare, 0.2); // .2 is 2*(360/9/4), the number of dots per side of square to match the PShape cloud
 
@@ -60,7 +63,7 @@ void setup() {
   scaley = floor(height/cols);
 
   airplane = new PVector(r.getInt("plane_y")-1, r.getInt("plane_x")-1);
-  plane = new Plane(airplane.x * scalex, airplane.y * scaley, 255);
+  plane = new Plane(airplane.x * scalex, airplane.y * scaley, 0);
 
   //for (int i=0; i<wx.get(0).getRowCount(); i++) {
   //  TableRow tablerow = wx.get(0).getRow(i);
@@ -73,8 +76,8 @@ void setup() {
   //  c.checkForNeighbors();
   //}
 
-  //font = createFont("Arial-Black", 25);
-  //textFont(font, 18);
+  font = createFont("Arial", 12);
+  textFont(font, 12);
 }
 
 
@@ -83,7 +86,7 @@ void setup() {
 
 
 void draw() {
-  background(0);
+  //background(0);
 
   table = wx.get(index);
   staterow = state.get(index).getRow(0);
@@ -100,7 +103,6 @@ void draw() {
       plane.update(step1, step1);
     }
   }
-
 
   for (Cloud c : clouds) {    // reset all of the survives values
     c.survives = false;
@@ -138,23 +140,35 @@ void draw() {
     c.checkForNeighbors();
   }
 
+
+
+
   pushMatrix();
   translate(scalex/2, scaley/2);  // move by half of one square to center everything
+  background(topo);
+
+  fill(255, 150);
+  rectMode(CORNER);
+  rect(-100, -100, width+100, height+100);
 
   // grid lines
   strokeWeight(1);
-  stroke(150, 150);
+  stroke(0, 150);
   for (int j=0; j < cols; j++) line(-100, j*scaley + scaley/2, width+100, j*scaley + scaley/2);
   for (int i=0; i < rows; i++) line(i*scalex + scalex/2, -100, i*scalex + scalex/2, height+100);
 
+  // show the clouds
   shapeMode(CENTER);
   for (Cloud c : clouds) {
     c.show();
   }
 
-  //Path(state, index);                                       // path to airport
-  runway(int(airport.x) * scalex, int(airport.y) * scaley);   // airport
-  plane.show(scalex/4, scaley/4, staterow.getString(1));      // plane
+  //Path(state, index);                                           // real path taken to airport
+  runway(int(airport.x) * scalex, int(airport.y) * scaley, 0);    // airport
+  plane.show(scalex/4, scaley/4, staterow.getString(1));          // plane
+  compass((rows-1.5), 0.5, statetable.getInt(0, 5), statetable.getInt(0, 6));
+  legend((rows-3)*scalex, (0)*scaley);
+
   popMatrix();
 
 
@@ -177,8 +191,8 @@ void draw() {
   }
 
   if (saveframe) {
-    if (index<10)  saveFrame("images/" + str(scenario) + "_" + str(time_per_move) + "/"  + "0" + str(index) + "_" + "###" + ".png");
-    else           saveFrame("images/" + str(scenario) + "_" + str(time_per_move) + "/"  + str(index) + "_" + "###" + ".png");
+    if (index<10)  saveFrame("images/" + str(scenario) + "_" + str(time_per_move) + "/"  + "0" + str(index) + "_" + "####" + ".tif");
+    else           saveFrame("images/" + str(scenario) + "_" + str(time_per_move) + "/"  + str(index) + "_" + "####" + ".tif");
   }
   //noLoop();
 }
