@@ -40,13 +40,13 @@ class Plane { //<>//
         heading.setMag(mag);
         PVector L = new PVector();
         PVector.cross(heading, new PVector(0, 0, 1), L);          // perpendicular vector
-        L.mult(mag*mag/radius);                                   // |a| = v^2/r
+        L.mult(2*mag*mag/radius);                                   // |a| = v^2/r
         L.add(heading);                                             // v_n ~ a + v_(n-1)  
         //L.setMag(mag);                                            // dS = r*dT
         this.angle = L.heading();
         this.pos.add(L);
-        println(this.theta);
-        if (this.theta >= 150) {    // WHY ON EARTH IS THIS A PROBLEM AT ALL. todo: resolve this (L.mult(2) is also conspicuous)
+        println(this.theta, " ", degrees(this.angle));
+        if (this.theta >= 110) {    // WHY ON EARTH IS THIS A PROBLEM AT ALL. todo: resolve this (L.mult(2) is also conspicuous)
           this.turn = false;
           this.theta = 0;
         }

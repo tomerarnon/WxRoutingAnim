@@ -24,9 +24,9 @@ File[] files = new File(dataPath(beginfp)).listFiles();
 String pdf = "images/" + str(scenario) + "_" + str(time_per_move) + ".pdf";
 
 boolean savepdf = false;
-boolean saveframe = true;
+boolean saveframe = false;
 
-Float lps = 20.0;     // lerps per step
+Float lps = 30.0;     // lerps per step
 int index = 0;
 
 
@@ -147,13 +147,13 @@ void draw() {
   translate(scalex/2, scaley/2);  // move by half of one square to center everything
   background(topo);
 
-  fill(255, 150);
+  fill(255, 100);
   rectMode(CORNER);
   rect(-100, -100, width+100, height+100);
 
   // grid lines
   strokeWeight(1);
-  stroke(0, 150);
+  stroke(0, 50);
   for (int j=0; j < cols; j++) line(-100, j*scaley + scaley/2, width+100, j*scaley + scaley/2);
   for (int i=0; i < rows; i++) line(i*scalex + scalex/2, -100, i*scalex + scalex/2, height+100);
 

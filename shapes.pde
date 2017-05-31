@@ -169,7 +169,7 @@ void compass(float x, float y, int v, int dir) {
   float sx = scalex*1;
   float sy = scaley*1;
   PVector w = PVector.fromAngle(radians(dir));
-  println(degrees(w.heading()));
+  //println(degrees(w.heading()));
   w.mult(sx*0.4);
 
   pushMatrix();

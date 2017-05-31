@@ -1,6 +1,7 @@
 class Cloud {
   PVector pos;
   float value;
+  float lastValue;
   //PShape shape = createShape();
   PShape cir;
   boolean survives;
@@ -24,6 +25,7 @@ class Cloud {
 
   void update(float x, float y, float _value) {
     this.pos = new PVector(x, y); 
+    this.lastValue = this.value;
     this.value = _value;
     //circles = new ArrayList<PShape>();
     //populate();
@@ -84,9 +86,12 @@ class Cloud {
   }
 
   void decimate() {
+    for (int i=0; i<int(this.lastValue/4); i++) {
+      int r = int(random(0, circles.size()));
+      circles.remove(r);
+    }
     for (int i=0; i<int(this.value/4); i++) {
       cir = makeCircle(scalex, scaley); 
-      circles.remove(i);
       circles.add(cir);
     }
   }
