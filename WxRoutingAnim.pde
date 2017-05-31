@@ -26,7 +26,7 @@ String pdf = "images/" + str(scenario) + "_" + str(time_per_move) + ".pdf";
 boolean savepdf = false;
 boolean saveframe = true;
 
-Float lps = 40.0;     // lerps per step
+Float lps = 20.0;     // lerps per step
 int index = 0;
 
 
@@ -34,7 +34,7 @@ void setup() {
   //size(495, 350, PDF, pdf); 
   size(900, 600, P2D); 
   if (!savepdf) {
-    frameRate(40);
+    frameRate(60);
   }
 
   topo = loadImage("Objects/gEarth.png");
@@ -76,8 +76,8 @@ void setup() {
   //  c.checkForNeighbors();
   //}
 
-  font = createFont("Arial", 12);
-  textFont(font, 12);
+  //font = createFont("Arial", 12);
+  //textFont(font, 12);
 }
 
 
@@ -164,9 +164,10 @@ void draw() {
   }
 
   //Path(state, index);                                           // real path taken to airport
-  runway(int(airport.x) * scalex, int(airport.y) * scaley, 0);    // airport
+  //runway(int(airport.x) * scalex, int(airport.y) * scaley, 0);    // airport
+  runway(int(airport.x) * scalex, int(airport.y) * scaley);    // airport
   plane.show(scalex/4, scaley/4, staterow.getString(1));          // plane
-  compass((rows-1.5), 0.5, statetable.getInt(0, 5), statetable.getInt(0, 6));
+  compass((rows-1.5), 0.5, staterow.getInt(7), staterow.getInt(8));
   legend((rows-3)*scalex, (0)*scaley);
 
   popMatrix();
@@ -191,8 +192,8 @@ void draw() {
   }
 
   if (saveframe) {
-    if (index<10)  saveFrame("images/" + str(scenario) + "_" + str(time_per_move) + "/"  + "0" + str(index) + "_" + "####" + ".tif");
-    else           saveFrame("images/" + str(scenario) + "_" + str(time_per_move) + "/"  + str(index) + "_" + "####" + ".tif");
+    if (index<10)  saveFrame("images/" + str(scenario) + "_" + str(time_per_move) + "/"  + "0" + str(index) + "_" + "####" + ".png");
+    else           saveFrame("images/" + str(scenario) + "_" + str(time_per_move) + "/"  + str(index) + "_" + "####" + ".png");
   }
   //noLoop();
 }

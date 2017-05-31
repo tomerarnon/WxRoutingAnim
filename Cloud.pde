@@ -84,10 +84,8 @@ class Cloud {
   }
 
   void decimate() {
-    float w = scalex;
-    float h = scaley;
     for (int i=0; i<int(this.value/4); i++) {
-      cir = makeCircle(w, h); 
+      cir = makeCircle(scalex, scaley); 
       circles.remove(i);
       circles.add(cir);
     }

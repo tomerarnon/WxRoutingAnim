@@ -1,28 +1,28 @@
 
-void runway(int x, int y, int fill) {
-  rectMode(CENTER);
-  //float x_offset = scalex/3;
-  //float y_offset = scaley/3;  
+//void runway(int x, int y, int fill) {
+//  rectMode(CENTER);
+//  //float x_offset = scalex/3;
+//  //float y_offset = scaley/3;  
 
-  pushMatrix();
-  translate(x, y);
-  //stroke(0, 255);
-  //strokeWeight(10);
-  //line(-x_offset, y_offset, x_offset, -y_offset);
-  //line(-x_offset, -y_offset, x_offset, y_offset);
+//  pushMatrix();
+//  translate(x, y);
+//  //stroke(0, 255);
+//  //strokeWeight(10);
+//  //line(-x_offset, y_offset, x_offset, -y_offset);
+//  //line(-x_offset, -y_offset, x_offset, y_offset);
 
-  fill(fill);
-  noStroke();
-  ellipse(0, 0, scalex/3, scaley/3);
+//  fill(fill);
+//  noStroke();
+//  ellipse(0, 0, scalex/3, scaley/3);
 
-  noFill();
-  strokeWeight(2);
-  stroke(fill);
-  ellipse(0, 0, scalex/1.3, scaley/1.3);
+//  noFill();
+//  strokeWeight(2);
+//  stroke(fill);
+//  ellipse(0, 0, scalex/1.3, scaley/1.3);
 
-  popMatrix();
-  rectMode(CORNER);
-}
+//  popMatrix();
+//  rectMode(CORNER);
+//}
 
 
 void Path(ArrayList<Table> statedata, int index) {
@@ -86,63 +86,63 @@ void unitsquare(ArrayList<PVector> square, float n) {
   }
 }
 
-void chevron(float sizex, float sizey){
-     beginShape();
-    vertex(0, -sizex/2);
-    vertex(-sizex, -sizey);
-    vertex(0, sizex-1);
-    vertex(sizex, -sizey);
-    vertex(0, -sizex/2);
-    endShape(); 
+void chevron(float sizex, float sizey) {
+  beginShape();
+  vertex(0, -sizex/2);
+  vertex(-sizex, -sizey);
+  vertex(0, sizex-1);
+  vertex(sizex, -sizey);
+  vertex(0, -sizex/2);
+  endShape();
 }
 
 
 
 //// oldstyle of runway
-//void runway(int x, int y) {
-//  rectMode(CENTER);
-//  float x_offset = scalex * 0.1;
-//  float y_offset = scaley * 0.9;  
+void runway(int x, int y) {
+  rectMode(CENTER);
+  float x_offset = scalex * 0.1;
+  float y_offset = scaley * 0.9;  
 
-//  pushMatrix();
-//  translate(x, y);
-//  scale(0.6);
+  pushMatrix();
+  translate(x, y);
+  scale(0.6);
 
-//  //  // Circle
-//  //  fill(0, 0, 205);
-//  //  noStroke();
-//  //  ellipse(0, 0, scalex, scaley);
+  //  // Circle
+  //  fill(0, 0, 205);
+  //  noStroke();
+  //  ellipse(0, 0, scalex, scaley);
 
-//  //// With Stroke
-//  // Vertical stripes
-//  fill(244, 255, 255);
-//  stroke(0);
-//  strokeWeight(11);
-//  rect(x_offset, 0, scalex/10, y_offset-2);
-//  rect(-x_offset, 0, scalex/10, y_offset);
-//  // Horizontal
-//  pushMatrix();
-//  rotate(HALF_PI);
-//  rect(x_offset, 0, scalex/10, y_offset);
-//  rect(-x_offset, 0, scalex/10, y_offset);
-//  popMatrix();
+  //// With Stroke
+  // Vertical stripes
+  fill(255);
+  stroke(0, 0, 200);
+  strokeWeight(11);
+  rect(x_offset, 0, scalex/10, y_offset);
+  rect(-x_offset, 0, scalex/10, y_offset);
+  // Horizontal
+  pushMatrix();
+  rotate(HALF_PI);
+  rect(x_offset, 0, scalex/10, y_offset);
+  rect(-x_offset, 0, scalex/10, y_offset);
+  popMatrix();
 
 
-//  //// Without Stroke
-//  // Vertical stripes
-//  noStroke();
-//  rect(x_offset, 0, scalex/10, scaley*0.7);
-//  rect(-x_offset, 0, scalex/10, y_offset);
-//  // Horizontal
-//  pushMatrix();
-//  rotate(HALF_PI);
-//  rect(x_offset, 0, scalex/10, y_offset);
-//  rect(-x_offset, 0, scalex/10, y_offset);
-//  popMatrix();
+  //// Without Stroke
+  // Vertical stripes
+  noStroke();
+  rect(x_offset, 0, scalex/10, scaley*0.7);
+  rect(-x_offset, 0, scalex/10, y_offset);
+  // Horizontal
+  pushMatrix();
+  rotate(HALF_PI);
+  rect(x_offset, 0, scalex/10, y_offset);
+  rect(-x_offset, 0, scalex/10, y_offset);
+  popMatrix();
 
-//  popMatrix();
-//  rectMode(CORNER);
-//}
+  popMatrix();
+}
+
 
 
 
@@ -169,23 +169,25 @@ void compass(float x, float y, int v, int dir) {
   float sx = scalex*1;
   float sy = scaley*1;
   PVector w = PVector.fromAngle(radians(dir));
-  //println(degrees(w.heading()));
+  println(degrees(w.heading()));
   w.mult(sx*0.4);
 
   pushMatrix();
-  
   translate(x*scalex, y*scaley);
 
   fill(0);
-  //stroke(205, 150, 50);
-  //strokeWeight(1);
+  stroke(255);
+  strokeWeight(0.8);
+  ellipse(0, 0, sx+5, sy+5);
+  fill(0);
   noStroke();
   ellipse(0, 0, sx, sy);
+
   noFill();
   //ellipse(0, 0, sx*0.95, sy*0.95);
 
   // compass letters
-  textSize(12);
+  textSize(10);
   fill(255);
   noStroke();
   textAlign(CENTER, CENTER);
@@ -197,36 +199,32 @@ void compass(float x, float y, int v, int dir) {
   // windspeed
   fill(0);
   String string = "Wind: " + str(v) + "kn";
-  text(string, 0, -sy*0.65); 
+  text(string, 0, -sy*0.68); 
 
   // compass lines
   stroke(255);
-  strokeWeight(1);
+  strokeWeight(0.8);
   for (int t=0; t<360; t+=15) {
     pushMatrix();
     rotate(radians(t));
-    line(0, sy*0.4, 0, sy*0.48);
+    line(0, sy*0.43, 0, sy*0.48);
     popMatrix();
   }
 
   // wind Arrow
   pushMatrix();
-  
-  rotate(PI/2);
+  rotate(PI/2);  // the whole grid is rotated as x <-> y relative to the julia code
   rotate(w.heading());
-  stroke(255);
+  noStroke();
   fill(255, 0, 0);
-  strokeWeight(0.2);
+  //strokeWeight(0.2);
   rectMode(CENTER);
-  rect(w.mag()/2, 0, w.mag(), 2);
-  //line(5, 0, w.mag(), 0);
+  rect(w.mag()/2, 0, w.mag(), 3);
   pushMatrix();
   translate(w.mag(), 0);
-  //rotate(-w.heading());
-  triangle(0, 0, -sx/20, sy/30, -sx/20, -sy/30);
+  triangle(0, 0, -sx/15, sy/20, -sx/15, -sy/20);
   popMatrix();
-  
   popMatrix();
-  
+
   popMatrix();
 }

@@ -40,13 +40,13 @@ class Plane { //<>//
         heading.setMag(mag);
         PVector L = new PVector();
         PVector.cross(heading, new PVector(0, 0, 1), L);          // perpendicular vector
-        L.mult(2*mag*mag/radius);                                   // |a| = v^2/r
+        L.mult(mag*mag/radius);                                   // |a| = v^2/r
         L.add(heading);                                             // v_n ~ a + v_(n-1)  
         //L.setMag(mag);                                            // dS = r*dT
         this.angle = L.heading();
         this.pos.add(L);
         println(this.theta);
-        if (this.theta >= 150) {
+        if (this.theta >= 150) {    // WHY ON EARTH IS THIS A PROBLEM AT ALL. todo: resolve this (L.mult(2) is also conspicuous)
           this.turn = false;
           this.theta = 0;
         }
@@ -91,10 +91,10 @@ class Plane { //<>//
   void show(float sizex, float sizey, String binary) {
     pushMatrix();
     translate(this.pos.x, this.pos.y);
-    fill(255-fill);    // circle fill
-    strokeWeight(2);
-    stroke(fill);
-    ellipse(0, 0, 2.5*sizex, 2.5*sizey);
+    //fill(255-fill);    // circle fill
+    //strokeWeight(2);
+    //stroke(fill);
+    //ellipse(0, 0, 2.5*sizex, 2.5*sizey);
 
     rotate(this.angle - HALF_PI);
     rotate(-QUARTER_PI);          // the plane image is diagonal
@@ -106,7 +106,7 @@ class Plane { //<>//
     //stroke(255);
     shapeMode(CENTER);
     shape(airplane, 0, 0, sizex*1.5, sizey*1.5);
-    radar(binary);
+    //radar(binary);
     //chevron(sizex, sizey);
     popMatrix();
   }
