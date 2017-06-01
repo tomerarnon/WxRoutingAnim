@@ -68,23 +68,23 @@ void Path_indranil(Table statedata, int index) {
 }
 
 
-void unitsquare(ArrayList<PVector> square, float n) {
-  // Bottom
-  for (float x = 1; x > -1; x -= n) {
-    square.add(new PVector(x, 1));
-  }
-  // Left side
-  for (float y = 1; y > -1; y -= n) {
-    square.add(new PVector(-1, y));
-  }  // Top of square
-  for (float x = -1; x < 1; x += n) {
-    square.add(new PVector(x, -1));
-  }
-  // Right side
-  for (float y = -1; y < 1; y += n) {
-    square.add(new PVector(1, y));
-  }
-}
+//void unitsquare(ArrayList<PVector> square, float n) {
+//  // Bottom
+//  for (float x = 1; x > -1; x -= n) {
+//    square.add(new PVector(x, 1));
+//  }
+//  // Left side
+//  for (float y = 1; y > -1; y -= n) {
+//    square.add(new PVector(-1, y));
+//  }  // Top of square
+//  for (float x = -1; x < 1; x += n) {
+//    square.add(new PVector(x, -1));
+//  }
+//  // Right side
+//  for (float y = -1; y < 1; y += n) {
+//    square.add(new PVector(1, y));
+//  }
+//}
 
 void chevron(float sizex, float sizey) {
   beginShape();
@@ -113,31 +113,32 @@ void runway(int x, int y) {
   //  noStroke();
   //  ellipse(0, 0, scalex, scaley);
 
-  //// With Stroke
-  // Vertical stripes
+  ////////// With Stroke
+  //// Vertical stripes
   fill(255);
-  stroke(0, 0, 200);
-  strokeWeight(11);
-  rect(x_offset, 0, scalex/10, y_offset);
+  
+  stroke(41, 76, 200);
+  strokeWeight(15);
+  rect(x_offset, 0, scalex/10, y_offset*0.7);
   rect(-x_offset, 0, scalex/10, y_offset);
-  // Horizontal
+  //// Horizontal
   pushMatrix();
-  rotate(HALF_PI);
-  rect(x_offset, 0, scalex/10, y_offset);
-  rect(-x_offset, 0, scalex/10, y_offset);
+  rotate(HALF_PI+ 0.1);
+  rect(x_offset, 10, scalex/10, y_offset);
+  rect(-x_offset, 0, scalex/10, y_offset*0.7);
   popMatrix();
 
 
-  //// Without Stroke
-  // Vertical stripes
+  /////// White Without Stroke
+  //// Vertical stripes
   noStroke();
   rect(x_offset, 0, scalex/10, scaley*0.7);
   rect(-x_offset, 0, scalex/10, y_offset);
-  // Horizontal
+  //// Horizontal
   pushMatrix();
-  rotate(HALF_PI);
-  rect(x_offset, 0, scalex/10, y_offset);
-  rect(-x_offset, 0, scalex/10, y_offset);
+  rotate(HALF_PI + 0.1);
+  rect(x_offset, 10, scalex/10, y_offset);
+  rect(-x_offset, 0, scalex/10, y_offset*0.7);
   popMatrix();
 
   popMatrix();

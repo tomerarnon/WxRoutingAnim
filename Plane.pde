@@ -1,4 +1,4 @@
-class Plane { //<>//
+class Plane { //<>// //<>//
   PVector pos;
   PVector next, lookAhead;
   PShape airplane = loadShape("Objects/Airplane_silhouette.svg");
@@ -11,6 +11,8 @@ class Plane { //<>//
   float theta;
   float radius = scalex * f;
   float mag = radius * dT * (PI/180);
+  PVector waypoint;
+  boolean avoid = false;
 
   Plane(float x, float y, int fill) {
     this.pos = new PVector(0, 0);
@@ -19,9 +21,10 @@ class Plane { //<>//
     this.fill = fill;
     this.angle = vecFromString(dir).heading();
     this.turn = false;
+    this.waypoint = this.pos;
   }
 
-  void update(String step1, String step2) {      // "N", "E"
+  void update(PVector waypoint, String step1, String step2) {      // "N", "E"
     if (this.turn) {
       if (PVector.angleBetween(this.next, this.lookAhead)<PI) {    // if it's a 90 degree turn:
         this.theta += dT;
@@ -45,13 +48,14 @@ class Plane { //<>//
         //L.setMag(mag);                                            // dS = r*dT
         this.angle = L.heading();
         this.pos.add(L);
-        println(this.theta, " ", degrees(this.angle));
+        //println(this.theta, " ", degrees(this.angle));
         if (this.theta >= 110) {    // WHY ON EARTH IS THIS A PROBLEM AT ALL. todo: resolve this (L.mult(2) is also conspicuous)
           this.turn = false;
           this.theta = 0;
         }
       }
     } else {
+      this.waypoint = waypoint;
       this.next = vecFromString(step1).mult(1/lps);
       this.lookAhead = vecFromString(step2).mult(1/lps);
       this.pos.add(this.next);
@@ -88,7 +92,7 @@ class Plane { //<>//
 
 
 
-  void show(float sizex, float sizey, String binary) {
+  void show(float sizex, float sizey) {
     pushMatrix();
     translate(this.pos.x, this.pos.y);
     //fill(255-fill);    // circle fill
@@ -100,12 +104,14 @@ class Plane { //<>//
     rotate(-QUARTER_PI);          // the plane image is diagonal
     rotate(PI);                   // and backwards...
     airplane.disableStyle();
-    fill(fill, 255);    
     //stroke(255-fill);
-    //strokeWeight(2);
+    //strokeWeight(10);
     //stroke(255);
     shapeMode(CENTER);
-    shape(airplane, 0, 0, sizex*1.5, sizey*1.5);
+    fill(255-fill, 255);    
+    shape(airplane, 0, 0, sizex*1.8, sizey*1.8);
+    fill(fill, 255);    
+    shape(airplane, 0, 0, sizex*1.4, sizey*1.4);
     //radar(binary);
     //chevron(sizex, sizey);
     popMatrix();
@@ -113,14 +119,32 @@ class Plane { //<>//
 
   void avoid(Plane other, String _dir) {
     PVector dist = PVector.sub(this.pos, other.pos);
-    if (dist.mag() == 0) {
-      if (_dir.equals("up")) {
-        this.pos.y += (0.3 * scaley);
-        other.pos.y -= (0.3 * scaley);
+    PVector wpd = PVector.sub(this.waypoint, other.waypoint);
+
+
+    if (dist.mag() == 0 && wpd.mag()==0) {
+      if (this.avoid == false) {
+        println("avoid");
+        this.avoid = true;
+        if (_dir.equals("up")) {
+          this.pos.y += (0.3 * scaley);
+          other.pos.y -= (0.3 * scaley);
+        }
+        if (_dir.equals("down")) {
+          this.pos.y -= (0.3 * scaley);
+          other.pos.y += (0.3 * scaley);
+        }
       }
-      if (_dir.equals("down")) {
+    } else if (this.avoid == true && dist.mag()>scaley) {
+      println("stop avoid");
+      this.avoid = false;
+      if (_dir.equals("up")) {
         this.pos.y -= (0.3 * scaley);
         other.pos.y += (0.3 * scaley);
+      }
+      if (_dir.equals("down")) {
+        this.pos.y += (0.3 * scaley);
+        other.pos.y -= (0.3 * scaley);
       }
     }
   }
